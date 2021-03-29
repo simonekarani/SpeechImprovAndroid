@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/storyText"
+        android:layout_width="match_parent"
+        android:layout_height="106dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:textStyle="bold"
+        android:text="Which one?" />
+
+    <TextView
+        android:id="@+id/storyCopyrightText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:textSize="12dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="Copyright &#169; THE QUIZ by Sosa Manuel" />
+
+    <ImageView
+        android:id="@+id/storyImage"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:id="@+id/storyoptionText"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:text="Select one of the below options?" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/storyoptButton1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textStyle="normal"
+                android:text="RadioButton" />
+
+            <Button
+                android:id="@+id/storyoptButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textStyle="normal"
+                android:text="RadioButton" />
+
+            <Button
+                android:id="@+id/storyoptButton3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textStyle="normal"
+                android:text="RadioButton" />
+
+            <Button
+                android:id="@+id/storyoptButton4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true"
+                android:paddingRight="5dp"
+                android:paddingLeft="5dp"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textStyle="normal"
+                android:text="RadioButton" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

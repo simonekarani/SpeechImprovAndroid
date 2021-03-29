@@ -21,6 +21,9 @@ import android.view.WindowManager;
 
 import com.simonekarani.speechimprov.model.MainScreenData;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
+import com.simonekarani.speechimprov.speechpractice.SpeechPracticeActivity;
+import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
+import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
 
 import java.util.ArrayList;
 
@@ -129,25 +132,25 @@ public class MainActivity extends AppCompatActivity implements MainScreenDataAda
 
     @Override
     public void onTopicClick(int position) {
-        /*Intent intent = new Intent(this, MoralMachineActivity.class);
+        Intent intent = new Intent(this, SpeechPracticeActivity.class);
         switch (position) {
-            case PRACTICE_WORD_ID:
-                intent = new Intent(this, MoralDilemmaActivity.class);
+            case MainScreenData.PRACTICE_WORD_ID:
+                intent = new Intent(this, WordPracticeActivity.class);
                 break;
-            case MORAL_STORIES_ID:
-                intent = new Intent(this, MedicalEthicsActivity.class);
+            case MainScreenData.MORAL_STORIES_ID:
+                intent = new Intent(this, StoryPracticeActivity.class);
                 break;
-            case PRACTICE_SPEECH_ID:
-                intent = new Intent(this, TechEthicsActivity.class);
+            case MainScreenData.PRACTICE_SPEECH_ID:
+                intent = new Intent(this, SpeechPracticeActivity.class);
                 break;
-            case SPEECH_ANALYSIS_ID:
-                intent = new Intent(this, BusinessEthicsActivity.class);
+            case MainScreenData.SPEECH_ANALYSIS_ID:
+                intent = new Intent(this, SpeechPracticeActivity.class);
                 break;
             default:
-                intent = new Intent(this, MoralMachineActivity.class);
+                //intent = new Intent(this, MoralMachineActivity.class);
                 break;
         }
-        startActivity(intent);*/
+        startActivity(intent);
     }
 
     public void adjustFontScale(Configuration configuration)
