@@ -10,6 +10,7 @@ package com.simonekarani.speechimprov.wordpractice;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -39,18 +41,25 @@ public class WordPracticeActivity extends AppCompatActivity {
 
     private static final int MAX_DILEMMA_COUNT = 7;
 
+    private final static String WORD_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
+            /*"- Press Word Play for correct pronunciation\n" +
+            "- Press Mic to record the words\n" +
+            "- Press Play to play the recorded word\n" +
+            "- Press Next to move to next word\n";*/
+
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
     private static ArrayList<MainScreenDataModel> data;
     private View.OnClickListener myOnClickListener;
 
-    private TextView dilemmaTextView = null;
-    private ImageView dilemmaImageView = null;
-    private Button dilemmaOptBtn1 = null;
-    private Button dilemmaOptBtn2 = null;
-    private Button dilemmaOptBtn3 = null;
-    private Button dilemmaOptBtn4 = null;
+    private TextView instrTextView = null;
+    private ImageButton prevImageView = null;
+    private ImageButton nextImageView = null;
+    private ImageView wordImageView = null;
+    private ImageButton recordedBtnView = null;
+    private ImageButton recordBtnView = null;
+    private ImageButton playBtnView = null;
 
     private Set<Integer> mDilemmaDataSet = new HashSet<>();
     private int userResultCount = 0;
@@ -66,24 +75,26 @@ public class WordPracticeActivity extends AppCompatActivity {
         currDilemmaDataIdx = 0;
         userResultCount = 0;
 
-        /*dilemmaTextView = (TextView) findViewById(R.id.dilemmaText);
-        dilemmaImageView = (ImageView) findViewById(R.id.dilemmaImage);
-        dilemmaOptBtn1  = (Button) findViewById(R.id.optButton1);
-        dilemmaOptBtn2  = (Button) findViewById(R.id.optButton2);
-        dilemmaOptBtn3  = (Button) findViewById(R.id.optButton3);
-        dilemmaOptBtn4  = (Button) findViewById(R.id.optButton4);
+        instrTextView = (TextView) findViewById(R.id.instrText);
+        prevImageView = (ImageButton) findViewById(R.id.prevImage);
+        nextImageView = (ImageButton) findViewById(R.id.nextImage);
+        wordImageView = (ImageView) findViewById(R.id.wordImage);
+        recordedBtnView = (ImageButton) findViewById(R.id.recordedBtn);
+        recordBtnView = (ImageButton) findViewById(R.id.recBtn);
+        playBtnView   = (ImageButton) findViewById(R.id.playBtn);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
-        dilemmaOptBtn1.setOnClickListener(myOnClickListener);
-        dilemmaOptBtn2.setOnClickListener(myOnClickListener);
-        dilemmaOptBtn3.setOnClickListener(myOnClickListener);
-        dilemmaOptBtn4.setOnClickListener(myOnClickListener);*/
+        prevImageView.setOnClickListener(myOnClickListener);
+        nextImageView.setOnClickListener(myOnClickListener);
+        recordedBtnView.setOnClickListener(myOnClickListener);
+        recordBtnView.setOnClickListener(myOnClickListener);
+        playBtnView.setOnClickListener(myOnClickListener);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //updateDilemmaView();
+        updateWordImprovView();
     }
 
     @Override
@@ -103,32 +114,21 @@ public class WordPracticeActivity extends AppCompatActivity {
         }*/
     }
 
-/*    private void updateDilemmaView() {
-        do {
+    private void updateWordImprovView() {
+        instrTextView.setText(WORD_INSTR);
+        recordedBtnView.setImageResource(R.drawable.recorded);
+        recordBtnView.setImageResource(R.drawable.rec);
+        playBtnView.setImageResource(R.drawable.play);
+         /*do {
             currDilemmaDataIdx = (int)(MoralDilemmaData.MoralDilemmaDataList.length * Math.random());
         } while (mDilemmaDataSet.contains(currDilemmaDataIdx));
         mDilemmaDataSet.add(currDilemmaDataIdx);
         MoralDilemmaModel dilemmaData = MoralDilemmaData.MoralDilemmaDataList[currDilemmaDataIdx];
 
         dilemmaTextView.setTextSize(dilemmaData.getQuestionFontSize());
-        dilemmaTextView.setText(dilemmaData.getQuestion());
-
-        dilemmaImageView.setImageResource(dilemmaData.getImageResId());
-        dilemmaOptBtn1.setTextSize(dilemmaData.getOptionFontSize());
-        dilemmaOptBtn1.setText(dilemmaData.getOption1());
-        dilemmaOptBtn2.setTextSize(dilemmaData.getOptionFontSize());
-        dilemmaOptBtn2.setText(dilemmaData.getOption2());
-        dilemmaOptBtn3.setTextSize(dilemmaData.getOptionFontSize());
-        dilemmaOptBtn3.setText(dilemmaData.getOption3());
-        dilemmaOptBtn4.setTextSize(dilemmaData.getOptionFontSize());
-        dilemmaOptBtn4.setText(dilemmaData.getOption4());
-
-        dilemmaOptBtn1.setPadding(0, 0, 0, dilemmaData.getBtnGap());
-        dilemmaOptBtn2.setPadding(0, 0, 0, dilemmaData.getBtnGap());
-        dilemmaOptBtn3.setPadding(0, 0, 0, dilemmaData.getBtnGap());
-        dilemmaOptBtn4.setPadding(0, 0, 0, 0);
+        */
+        wordImageView.setImageResource(R.drawable.lava);
     }
-*/
 
     private class MyOnClickListener implements View.OnClickListener {
 
@@ -141,6 +141,24 @@ public class WordPracticeActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             int selectedOptIdx = -1;
+            if (prevImageView.isPressed()) {
+                selectedOptIdx = 0;
+            }
+            else if (nextImageView.isPressed()) {
+                selectedOptIdx = 1;
+            }
+            else if (recordedBtnView.isPressed()) {
+                selectedOptIdx = 2;
+                recordedBtnView.setImageResource(R.drawable.recorded_play);
+            }
+            else if (recordBtnView.isPressed()) {
+                selectedOptIdx = 3;
+                recordBtnView.setImageResource(R.drawable.rec_progress);
+            }
+            else {
+                selectedOptIdx = 4;
+                playBtnView.setImageResource(R.drawable.pause);
+            }
             onRestart();
         }
     }
