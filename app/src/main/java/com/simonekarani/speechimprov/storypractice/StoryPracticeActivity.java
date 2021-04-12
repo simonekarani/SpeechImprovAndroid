@@ -1,9 +1,9 @@
 //
 //  SpeechPracticeActivity.java
-//  MoralIQ
+//  SpeechImprov
 //
-//  Created by Simone Karani on 2/9/20.
-//  Copyright © 2020 SpeechImprov. All rights reserved.
+//  Created by Simone Karani on 2/9/21.
+//  Copyright © 2021 SpeechImprov. All rights reserved.
 //
 
 package com.simonekarani.speechimprov.storypractice;

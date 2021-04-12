@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenDataAda
 
     public void adjustFontScale(Configuration configuration)
     {
-        configuration.fontScale = (float) 1.0;
+        configuration.fontScale = (float) 0.9;
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         wm.getDefaultDisplay().getMetrics(metrics);
