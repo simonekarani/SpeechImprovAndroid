@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.simonekarani.speechimprov">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,15 +9,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeechImprov">
+
         <activity
             android:name=".wordpractice.WordPracticeActivity"
-            android:label="@string/title_activity_word_practice"></activity>
+            android:label="@string/title_activity_word_practice" />
+
         <activity
             android:name=".storypractice.StoryPracticeActivity"
-            android:label="@string/title_activity_story_practice"></activity>
+            android:label="@string/title_activity_story_practice" />
         <activity
             android:name=".speechpractice.SpeechPracticeActivity"
-            android:label="@string/title_activity_speech_practice"></activity>
+            android:label="@string/title_activity_speech_practice" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +27,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
+
+    <uses-feature android:name="android.hardware.type.watch" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>

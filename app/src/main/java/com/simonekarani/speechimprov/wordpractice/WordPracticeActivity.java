@@ -10,19 +10,24 @@ package com.simonekarani.speechimprov.wordpractice;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,27 +37,40 @@ import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class WordPracticeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class WordPracticeActivity extends AppCompatActivity
+        implements TextToSpeech.OnInitListener, AdapterView.OnItemSelectedListener {
 
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
+    private final static int RECOGNIZER_RESULT = 1;
 
     private final static String WORD_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
             /*"- Press Word Play for correct pronunciation\n" +
             "- Press Mic to record the words\n" +
             "- Press Play to play the recorded word\n" +
             "- Press Next to move to next word\n";*/
+
+    private java.util.HashMap<Integer,WordPracticeDataModel[]> Index2GameData = new HashMap<Integer,WordPracticeDataModel[]>();
+
+    private final String[] TherapyGames = {
+            "Words for 'Z'", "Words for 'S'", "Words for 'G'", "Words for 'K'", "Words for 'D'",
+            "Words for 'T'", "Words for 'B'", "Words for 'P'", "Words for 'V'", "Words for 'TH'",
+            "Words for 'SH'", "Words for 'M'", "Words for 'N'", "Words for 'F'", "Words for 'CH'",
+            "Words for 'T >> S'", "Words for 'NG >> K & G'"
+    };
 
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -72,7 +90,9 @@ public class WordPracticeActivity extends AppCompatActivity implements TextToSpe
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
 
+    private WordPracticeDataModel wordPracticeDataList[];
     private Set<Integer> wordPracticeDataSet = new HashSet<>();
+    private ArrayList<String> speechResultList = new ArrayList<>();
     private ArrayList<Integer> wordPracticeDataArray = new ArrayList<>();
     private int userResultCount = 0;
     private int currWordSetDataIdx = 0;
@@ -92,6 +112,17 @@ public class WordPracticeActivity extends AppCompatActivity implements TextToSpe
         currWordPracticeDataIdx = 0;
         userResultCount = 0;
         wordPracticeDataArray.add(currWordPracticeDataIdx);
+
+        for (int i = 0; i < WordPracticeData.WordPracticeList.length; i++) {
+            Index2GameData.put(i, WordPracticeData.WordPracticeList[i]);
+        }
+        wordPracticeDataList = Index2GameData.get(0);
+
+        Spinner mySpinner = (Spinner)findViewById(R.id.word_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                R.layout.row, R.id.row_text, TherapyGames);
+        mySpinner.setAdapter(adapter);
+        mySpinner.setOnItemSelectedListener(this);
 
         instrTextView = (TextView) findViewById(R.id.instrText);
         prevImageView = (ImageButton) findViewById(R.id.prevImage);
@@ -138,7 +169,7 @@ public class WordPracticeActivity extends AppCompatActivity implements TextToSpe
         recordedBtnView.setImageResource(R.drawable.recorded);
         recordBtnView.setImageResource(R.drawable.rec);
         playBtnView.setImageResource(R.drawable.play);
-        currPracticeData = WordPracticeData.WordPracticeDataList[currWordPracticeDataIdx];
+        currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
         wordImageView.setImageResource(currPracticeData.id_);
     }
 
@@ -196,11 +227,11 @@ public class WordPracticeActivity extends AppCompatActivity implements TextToSpe
             else if (v.getId() == R.id.nextImage) {
                 userSelectedOptIdx = 1;
                 do {
-                    currWordPracticeDataIdx = (int)(WordPracticeData.WordPracticeDataList.length * Math.random());
+                    currWordPracticeDataIdx = (int)(wordPracticeDataList.length * Math.random());
                 } while (wordPracticeDataSet.contains(currWordPracticeDataIdx));
                 wordPracticeDataSet.add(currWordPracticeDataIdx);
                 wordPracticeDataArray.add(currWordPracticeDataIdx);
-                currPracticeData = WordPracticeData.WordPracticeDataList[currWordPracticeDataIdx];
+                currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
 
                 onRestart();
             }
@@ -274,8 +305,14 @@ public class WordPracticeActivity extends AppCompatActivity implements TextToSpe
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             playBtnView.setEnabled(false);
             recordedBtnView.setEnabled(false);
+
+            Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            startActivityForResult(speechIntent, RECOGNIZER_RESULT);
+
             Toast.makeText(WordPracticeActivity.this, "Press Record button to stop recording.\nRecording ...", Toast.LENGTH_LONG).show();
         }
     }
@@ -326,6 +363,25 @@ public class WordPracticeActivity extends AppCompatActivity implements TextToSpe
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO
         }, REQUEST_PERMISSION_CODE);
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RECOGNIZER_RESULT && resultCode == RESULT_OK) {
+            speechResultList = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            Log.i("WordPracticeActivity", speechResultList.get(0).toString());
+        }
     }
 
     @Override
