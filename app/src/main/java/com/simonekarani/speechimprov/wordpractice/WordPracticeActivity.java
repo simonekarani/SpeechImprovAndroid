@@ -56,6 +56,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
+    private final static int OLDER_SET = 9;
 
     private final static String WORD_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
             /*"- Press Word Play for correct pronunciation\n" +
@@ -66,10 +67,8 @@ public class WordPracticeActivity extends AppCompatActivity
     private java.util.HashMap<Integer,WordPracticeDataModel[]> Index2GameData = new HashMap<Integer,WordPracticeDataModel[]>();
 
     private final String[] TherapyGames = {
-            "Words for 'Z'", "Words for 'S'", "Words for 'G'", "Words for 'K'", "Words for 'D'",
-            "Words for 'T'", "Words for 'B'", "Words for 'P'", "Words for 'V'", "Words for 'TH'",
-            "Words for 'SH'", "Words for 'M'", "Words for 'N'", "Words for 'F'", "Words for 'CH'",
-            "Words for 'T >> S'", "Words for 'NG >> K & G'"
+            "Words for 'V'", "Words for 'TH'", "Words for 'SH'", "Words for 'M'", "Words for 'N'",
+            "Words for 'F'", "Words for 'CH'", "Words for 'T >> S'", "Words for 'NG >> K & G'"
     };
 
     private static RecyclerView.Adapter adapter;
@@ -114,7 +113,7 @@ public class WordPracticeActivity extends AppCompatActivity
         wordPracticeDataArray.add(currWordPracticeDataIdx);
 
         for (int i = 0; i < WordPracticeData.WordPracticeList.length; i++) {
-            Index2GameData.put(i, WordPracticeData.WordPracticeList[i]);
+            Index2GameData.put(i, WordPracticeData.WordPracticeList[i+OLDER_SET]);
         }
         wordPracticeDataList = Index2GameData.get(0);
 
