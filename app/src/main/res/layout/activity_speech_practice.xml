@@ -1,122 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/speechText"
-        android:layout_width="match_parent"
-        android:layout_height="106dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:textStyle="bold"
-        android:text="Which one?" />
-
-    <TextView
-        android:id="@+id/improvCopyrightText"
+        android:id="@+id/instrText3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="2dp"
-        android:textSize="12dp"
-        android:gravity="center"
+        android:gravity="left"
         android:textStyle="bold"
-        android:text="Copyright &#169; THE QUIZ by Sosa Manuel" />
-
-    <ImageView
-        android:id="@+id/speechImage"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp" />
+        android:textSize="22dp"
+        android:text="Enter your speech for practice" />
 
     <TextView
-        android:id="@+id/optionText"
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
+        android:id="@+id/speechText"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
         android:layout_gravity="center"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        android:text="Select one of the below options?" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp" />
 
-    <ScrollView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="60dp"
+        android:orientation="horizontal" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:orientation="vertical" >
+        <ImageButton
+            android:id="@+id/recordedBtn3"
+            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/back"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="@color/white"
+            android:text="Listen" />
 
-            <Button
-                android:id="@+id/optButton1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_centerHorizontal="true"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black"
-                android:textStyle="normal"
-                android:text="RadioButton" />
+        <ImageButton
+            android:id="@+id/recBtn3"
+            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/back"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="@color/white"
+            android:text="Record" />
 
-            <Button
-                android:id="@+id/optButton2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_centerHorizontal="true"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black"
-                android:textStyle="normal"
-                android:text="RadioButton" />
+        <ImageButton
+            android:id="@+id/playBtn3"
+            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="30dp"
+            android:src="@drawable/back"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="@color/white"
+            android:text="Play" />
 
-            <Button
-                android:id="@+id/optButton3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_centerHorizontal="true"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black"
-                android:textStyle="normal"
-                android:text="RadioButton" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/optButton4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_centerHorizontal="true"
-                android:paddingRight="5dp"
-                android:paddingLeft="5dp"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black"
-                android:textStyle="normal"
-                android:text="RadioButton" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/recordedText3"
+            android:layout_weight="1"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="10dp"
+            android:textSize="16dp"
+            android:text="Listen" />
 
-    </ScrollView>
+        <TextView
+            android:id="@+id/recText3"
+            android:layout_weight="1"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp"
+            android:textSize="16dp"
+            android:text="Record" />
+
+        <TextView
+            android:id="@+id/playText3"
+            android:layout_weight="1"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:textSize="16dp"
+            android:text="Play" />
+
+    </LinearLayout>
 
 </LinearLayout>

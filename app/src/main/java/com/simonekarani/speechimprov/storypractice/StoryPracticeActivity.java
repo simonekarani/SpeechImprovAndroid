@@ -140,20 +140,20 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordBtnView = (ImageButton) findViewById(R.id.recBtn2);
         playBtnView   = (ImageButton) findViewById(R.id.playBtn2);
 
-        /*myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
+        myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         prevImageView.setOnClickListener(myOnClickListener);
         nextImageView.setOnClickListener(myOnClickListener);
         recordedBtnView.setOnClickListener(myOnClickListener);
         recordBtnView.setOnClickListener(myOnClickListener);
         playBtnView.setOnClickListener(myOnClickListener);
-        */
+
         //textToSpeech = new TextToSpeech(getApplicationContext(), this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //updateStoryImprovView();
+        updateStoryImprovView();
     }
 
     @Override
