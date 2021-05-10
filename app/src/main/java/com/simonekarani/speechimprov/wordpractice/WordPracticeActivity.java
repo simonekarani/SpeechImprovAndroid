@@ -56,7 +56,6 @@ public class WordPracticeActivity extends AppCompatActivity
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
-    private final static int OLDER_SET = 9;
 
     private final static String WORD_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
             /*"- Press Word Play for correct pronunciation\n" +
@@ -104,7 +103,7 @@ public class WordPracticeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_practice);
-        setTitle("Speech Practice");
+        setTitle("Practice Word Pronunciation");
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         currWordSetDataIdx = 0;
@@ -113,7 +112,7 @@ public class WordPracticeActivity extends AppCompatActivity
         wordPracticeDataArray.add(currWordPracticeDataIdx);
 
         for (int i = 0; i < WordPracticeData.WordPracticeList.length; i++) {
-            Index2GameData.put(i, WordPracticeData.WordPracticeList[i+OLDER_SET]);
+            Index2GameData.put(i, WordPracticeData.WordPracticeList[i]);
         }
         wordPracticeDataList = Index2GameData.get(0);
 

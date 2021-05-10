@@ -66,9 +66,8 @@ public class StoryPracticeActivity extends AppCompatActivity
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
-    private final static int OLDER_SET = 9;
 
-    private final static String WORD_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
+    private final static String STORY_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
             /*"- Press Word Play for correct pronunciation\n" +
             "- Press Mic to record the words\n" +
             "- Press Play to play the recorded word\n" +
@@ -114,7 +113,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_practice);
-        setTitle("Speech Practice");
+        setTitle("Practice Speech with Stories");
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         currWordSetDataIdx = 0;
@@ -122,11 +121,10 @@ public class StoryPracticeActivity extends AppCompatActivity
         userResultCount = 0;
         wordPracticeDataArray.add(currStoryPracticeDataIdx);
 
-        /*for (int i = 0; i < StoryPracticeData.StoryPracticeList.length; i++) {
-            Index2GameData.put(i, StoryPracticeData.StoryPracticeList[i+OLDER_SET]);
+        for (int i = 0; i < StoryPracticeData.StoryPracticeList.length; i++) {
+            Index2GameData.put(i, StoryPracticeData.StoryPracticeList[i]);
         }
         storyPracticeDataList = Index2GameData.get(0);
-        */
 
         Spinner mySpinner = (Spinner)findViewById(R.id.story_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -175,7 +173,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     }
 
     private void updateStoryImprovView() {
-        instrTextView.setText(WORD_INSTR);
+        instrTextView.setText(STORY_INSTR);
         recordedBtnView.setImageResource(R.drawable.recorded);
         recordBtnView.setImageResource(R.drawable.rec);
         playBtnView.setImageResource(R.drawable.play);
