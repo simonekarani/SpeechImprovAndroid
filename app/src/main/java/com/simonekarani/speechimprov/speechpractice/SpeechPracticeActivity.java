@@ -97,7 +97,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         recordBtnView.setOnClickListener(myOnClickListener);
         playBtnView.setOnClickListener(myOnClickListener);
 
-        //textToSpeech = new TextToSpeech(getApplicationContext(), this);
+        textToSpeech = new TextToSpeech(getApplicationContext(), this);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 recordedBtnView.setImageResource(R.drawable.recorded_play);
                 recordBtnView.setEnabled(false);
                 playBtnView.setEnabled(false);
-                //int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_FLUSH, null, "");
+                int speech = textToSpeech.speak(speechTextView.getText(), TextToSpeech.QUEUE_FLUSH, null, "");
             }
             else if (v.getId() == R.id.recBtn3) {
                 if (userSelectedOptIdx == 4) {
