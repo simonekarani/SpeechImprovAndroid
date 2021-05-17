@@ -22,17 +22,11 @@ import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,8 +80,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         setTitle("Speech Practice");
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        instrTextView = (TextView) findViewById(R.id.instrText3);
-        speechTextView = (TextView) findViewById(R.id.speechText);
+        instrTextView = (TextView) findViewById(R.id.speech_instr);
         recordedBtnView = (ImageButton) findViewById(R.id.recordedBtn3);
         recordBtnView = (ImageButton) findViewById(R.id.recBtn3);
         playBtnView   = (ImageButton) findViewById(R.id.playBtn3);
@@ -96,6 +89,16 @@ public class SpeechPracticeActivity extends AppCompatActivity
         recordedBtnView.setOnClickListener(myOnClickListener);
         recordBtnView.setOnClickListener(myOnClickListener);
         playBtnView.setOnClickListener(myOnClickListener);
+
+        speechTextView = (TextView) findViewById(R.id.speechText);
+        speechTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
     }
@@ -111,6 +114,15 @@ public class SpeechPracticeActivity extends AppCompatActivity
         super.onRestart();
 
         updateStoryImprovView();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     private void updateStoryImprovView() {
@@ -336,5 +348,10 @@ public class SpeechPracticeActivity extends AppCompatActivity
         int record_audio_results = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
         return write_external_storage_result == PackageManager.PERMISSION_GRANTED &&
                 record_audio_results == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(SpeechPracticeActivity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
