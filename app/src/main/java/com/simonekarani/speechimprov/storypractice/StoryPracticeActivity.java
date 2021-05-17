@@ -128,7 +128,7 @@ public class StoryPracticeActivity extends AppCompatActivity
 
         Spinner mySpinner = (Spinner)findViewById(R.id.story_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.row, R.id.row_text, TherapyStories);
+                R.layout.story_row, R.id.story_row_text, TherapyStories);
         mySpinner.setAdapter(adapter);
         mySpinner.setOnItemSelectedListener(this);
 
