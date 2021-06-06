@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
+import com.simonekarani.speechimprov.speechpractice.SpeechPracticeActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeData;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeDataModel;
@@ -114,7 +115,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_practice);
         setTitle("Practice Speech with Stories");
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         currWordSetDataIdx = 0;
         currStoryPracticeDataIdx = 0;
@@ -288,11 +289,12 @@ public class StoryPracticeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(getSupportFragmentManager().getBackStackEntryCount() > 0)
-                    getSupportFragmentManager().popBackStack();
-                break;
+                Intent intent = new Intent(StoryPracticeActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
             default:
-                super.onOptionsItemSelected(item);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -313,12 +315,6 @@ public class StoryPracticeActivity extends AppCompatActivity
 
             playBtnView.setEnabled(false);
             recordedBtnView.setEnabled(false);
-
-            Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            startActivityForResult(speechIntent, RECOGNIZER_RESULT);
-
-            Toast.makeText(StoryPracticeActivity.this, "Press Record button to stop recording.\nRecording ...", Toast.LENGTH_LONG).show();
         }
     }
 

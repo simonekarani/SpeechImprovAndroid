@@ -14,27 +14,36 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
@@ -60,13 +69,22 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
     private TextView instrTextView = null;
     private TextView speechTextView = null;
+    private Button clearButtonView = null;
     private ImageButton recordedBtnView = null;
     private ImageButton recordBtnView = null;
     private ImageButton playBtnView = null;
+    private TextView recordedText = null;
+    private TextView recText = null;
+    private TextView playText = null;
+    private TextView wordCountText = null;
+    private TextView wpmText = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
+    private long mRecStartTime = 0;
+    private long mRecEndTime = 0;
+    private int wordCountSpeech = 0;
 
     private ArrayList<String> speechResultList = new ArrayList<>();
     private int userResultCount = 0;
@@ -78,17 +96,24 @@ public class SpeechPracticeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_practice);
         setTitle("Speech Practice");
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         instrTextView = (TextView) findViewById(R.id.speech_instr);
         recordedBtnView = (ImageButton) findViewById(R.id.recordedBtn3);
+        clearButtonView = (Button) findViewById(R.id.clearButton);
         recordBtnView = (ImageButton) findViewById(R.id.recBtn3);
         playBtnView   = (ImageButton) findViewById(R.id.playBtn3);
+        recordedText = (TextView) findViewById(R.id.recordedText3);
+        recText = (TextView) findViewById(R.id.recText3);
+        playText = (TextView) findViewById(R.id.playText3);
+        wordCountText = (TextView) findViewById(R.id.wordCountText);
+        wpmText = (TextView) findViewById(R.id.wpmText);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         recordedBtnView.setOnClickListener(myOnClickListener);
         recordBtnView.setOnClickListener(myOnClickListener);
         playBtnView.setOnClickListener(myOnClickListener);
+        clearButtonView.setOnClickListener(myOnClickListener);
 
         speechTextView = (TextView) findViewById(R.id.speechText);
         speechTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -99,6 +124,10 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 }
             }
         });
+        String speechText = readFromFile(getApplicationContext());
+        if (!speechText.equals("")) {
+            speechTextView.setText(speechText);
+        }
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
     }
@@ -117,6 +146,12 @@ public class SpeechPracticeActivity extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        writeToFile(speechTextView.getText().toString(), getApplicationContext());
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -129,6 +164,9 @@ public class SpeechPracticeActivity extends AppCompatActivity
         recordedBtnView.setImageResource(R.drawable.recorded);
         recordBtnView.setImageResource(R.drawable.rec);
         playBtnView.setImageResource(R.drawable.play);
+        recordedText.setText("Listen");
+        recText.setText("Record");
+        playText.setText("Play");
         //wordImageView.setImageResource(currPracticeData.id_);
     }
 
@@ -183,6 +221,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 recordedBtnView.setImageResource(R.drawable.recorded_play);
                 recordBtnView.setEnabled(false);
                 playBtnView.setEnabled(false);
+                recordedText.setText("Reading");
                 int speech = textToSpeech.speak(speechTextView.getText(), TextToSpeech.QUEUE_FLUSH, null, "");
             }
             else if (v.getId() == R.id.recBtn3) {
@@ -190,9 +229,11 @@ public class SpeechPracticeActivity extends AppCompatActivity
                     userSelectedOptIdx = 5;
                     stopStoryRecording();
                     recordBtnView.setImageResource(R.drawable.rec);
+                    recText.setText("Record");
                 } else {
                     userSelectedOptIdx = 4;
                     recordBtnView.setImageResource(R.drawable.rec_progress);
+                    recText.setText("Recording");
                     if (checkPermissionFromDevice()) {
                         startWordRecording();
                     } else {
@@ -203,34 +244,40 @@ public class SpeechPracticeActivity extends AppCompatActivity
             else if (v.getId() == R.id.playBtn3){
                 if (userSelectedOptIdx == 6) {
                     playBtnView.setImageResource(R.drawable.play);
+                    playText.setText("Play");
                     stopWordPlay();
                     userSelectedOptIdx = -1;
                 } else {
                     userSelectedOptIdx = 6;
                     playBtnView.setImageResource(R.drawable.pause);
+                    playText.setText("In-Play");
                     startWordPlay();
                 }
+            }
+            else if (v.getId() == R.id.clearButton) {
+                speechTextView.setText("");
             }
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        */
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        writeToFile(speechTextView.getText().toString(), getApplicationContext());
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(getSupportFragmentManager().getBackStackEntryCount() > 0)
-                    getSupportFragmentManager().popBackStack();
-                break;
+                Intent intent = new Intent(SpeechPracticeActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
             default:
-                super.onOptionsItemSelected(item);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -249,14 +296,9 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
+            mRecStartTime = System.currentTimeMillis();
             playBtnView.setEnabled(false);
             recordedBtnView.setEnabled(false);
-
-            Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            startActivityForResult(speechIntent, RECOGNIZER_RESULT);
-
-            Toast.makeText(SpeechPracticeActivity.this, "Press Record button to stop recording.\nRecording ...", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -269,6 +311,16 @@ public class SpeechPracticeActivity extends AppCompatActivity
         playBtnView.setEnabled(true);
         recordedBtnView.setEnabled(true);
         userSelectedOptIdx = -1;
+
+        mRecEndTime = System.currentTimeMillis();
+        long deltaTime = mRecEndTime - mRecStartTime;
+        MediaPlayer mp = MediaPlayer.create(SpeechPracticeActivity.this, Uri.parse(recWordPath));
+        int duration = mp.getDuration();
+        int durationSecs = duration/1000; // convert milliseconds to seconds
+
+        int wpmValue = (wordCountSpeech * 60) / durationSecs;
+        String wordCountStr = "Words Per Min (WPM): " + wpmValue;
+        wpmText.setText(wordCountStr);
     }
 
     private void startWordPlay() {
@@ -281,6 +333,14 @@ public class SpeechPracticeActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                playBtnView.setImageResource(R.drawable.play);
+                playText.setText("Play");
+                userSelectedOptIdx = -1;
+            }
+        });
         mediaPlayer.start();
     }
 
@@ -351,7 +411,63 @@ public class SpeechPracticeActivity extends AppCompatActivity
     }
 
     public void hideKeyboard(View view) {
+        writeToFile(speechTextView.getText().toString(), getApplicationContext());
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(SpeechPracticeActivity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void writeToFile(String data, Context context) {
+        wordCountSpeech = countWordString(data);
+        String wordCountStr = "# of Words: " + wordCountSpeech;
+        wordCountText.setText(wordCountStr);
+
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("speechFile.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    private String readFromFile(Context context) {
+
+        String ret = "";
+        try {
+            InputStream inputStream = context.openFileInput("speechFile.txt");
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                    stringBuilder.append("\n");
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        wordCountSpeech = countWordString(ret);
+        String wordCountStr = "# of Words: " + wordCountSpeech;
+        wordCountText.setText(wordCountStr);
+
+        return ret;
+    }
+
+    private int countWordString(String inputStr) {
+        String words = inputStr.trim();
+        if (words.isEmpty())
+            return 0;
+        return words.split("\\s+").length;
     }
 }

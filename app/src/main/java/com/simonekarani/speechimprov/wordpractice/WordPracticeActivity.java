@@ -31,8 +31,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
+import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,7 +106,7 @@ public class WordPracticeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_practice);
         setTitle("Practice Word Pronunciation");
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         currWordSetDataIdx = 0;
         currWordPracticeDataIdx = 0;
@@ -281,11 +283,12 @@ public class WordPracticeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(getSupportFragmentManager().getBackStackEntryCount() > 0)
-                    getSupportFragmentManager().popBackStack();
-                break;
+                Intent intent = new Intent(WordPracticeActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
             default:
-                super.onOptionsItemSelected(item);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -295,7 +298,7 @@ public class WordPracticeActivity extends AppCompatActivity
         if (checkPermissionFromDevice()) {
             recWordPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
                     UUID.randomUUID().toString() + "_audio_record.3gp";
-            Log.i("Rec Speech", recWordPath);
+            Log.i("** Word Rec Speech", recWordPath);
             setupMediaRecorder();
             try {
                 mediaRecorder.prepare();
@@ -306,12 +309,6 @@ public class WordPracticeActivity extends AppCompatActivity
 
             playBtnView.setEnabled(false);
             recordedBtnView.setEnabled(false);
-
-            Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            startActivityForResult(speechIntent, RECOGNIZER_RESULT);
-
-            Toast.makeText(WordPracticeActivity.this, "Press Record button to stop recording.\nRecording ...", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -330,6 +327,8 @@ public class WordPracticeActivity extends AppCompatActivity
         mediaPlayer = new MediaPlayer();
         recordedBtnView.setEnabled(false);
         recordBtnView.setEnabled(false);
+
+        Log.i("** Play Word Speech", recWordPath);
         try {
             mediaPlayer.setDataSource(recWordPath);
             mediaPlayer.prepare();
@@ -403,5 +402,12 @@ public class WordPracticeActivity extends AppCompatActivity
         int record_audio_results = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
         return write_external_storage_result == PackageManager.PERMISSION_GRANTED &&
                 record_audio_results == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private int countWordString(String inputStr) {
+        String words = inputStr.trim();
+        if (words.isEmpty())
+            return 0;
+        return words.split("\\s+").length;
     }
 }
