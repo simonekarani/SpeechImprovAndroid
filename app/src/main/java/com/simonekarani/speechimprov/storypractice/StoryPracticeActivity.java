@@ -68,7 +68,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
 
-    private final static String STORY_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
+    private final static String STORY_INSTR = "Practice Speech with story book reading. Press Next to view pages of the story book.";
             /*"- Press Word Play for correct pronunciation\n" +
             "- Press Mic to record the words\n" +
             "- Press Play to play the recorded word\n" +
@@ -88,16 +88,24 @@ public class StoryPracticeActivity extends AppCompatActivity
     private View.OnClickListener myOnClickListener;
 
     private TextView instrTextView = null;
-    private ImageButton prevImageView = null;
-    private ImageButton nextImageView = null;
+    private Button prevImageView = null;
+    private Button nextImageView = null;
     private ImageView storyImageView = null;
     private ImageButton recordedBtnView = null;
     private ImageButton recordBtnView = null;
     private ImageButton playBtnView = null;
+    private TextView recordedText = null;
+    private TextView recText = null;
+    private TextView playText = null;
+    private TextView wordCountText = null;
+    private TextView wpmText = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
+    private long mRecStartTime = 0;
+    private long mRecEndTime = 0;
+    private int wordCountStory = 0;
 
     private StoryPracticeDataModel storyPracticeDataList[];
     private Set<Integer> wordPracticeDataSet = new HashSet<>();
@@ -122,6 +130,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         userResultCount = 0;
         wordPracticeDataArray.add(currStoryPracticeDataIdx);
 
+        wordCountStory = 0;
         for (int i = 0; i < StoryPracticeData.StoryPracticeList.length; i++) {
             Index2GameData.put(i, StoryPracticeData.StoryPracticeList[i]);
         }
@@ -134,12 +143,15 @@ public class StoryPracticeActivity extends AppCompatActivity
         mySpinner.setOnItemSelectedListener(this);
 
         instrTextView = (TextView) findViewById(R.id.instrText2);
-        prevImageView = (ImageButton) findViewById(R.id.prevImage2);
-        nextImageView = (ImageButton) findViewById(R.id.nextImage2);
+        prevImageView = (Button) findViewById(R.id.prevImage2);
+        nextImageView = (Button) findViewById(R.id.nextImage2);
         storyImageView = (ImageView) findViewById(R.id.storyImage);
         recordedBtnView = (ImageButton) findViewById(R.id.recordedBtn2);
         recordBtnView = (ImageButton) findViewById(R.id.recBtn2);
         playBtnView   = (ImageButton) findViewById(R.id.playBtn2);
+        recordedText = (TextView) findViewById(R.id.recordedText2);
+        recText = (TextView) findViewById(R.id.recText2);
+        playText = (TextView) findViewById(R.id.playText2);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         prevImageView.setOnClickListener(myOnClickListener);
@@ -148,7 +160,8 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordBtnView.setOnClickListener(myOnClickListener);
         playBtnView.setOnClickListener(myOnClickListener);
 
-        //textToSpeech = new TextToSpeech(getApplicationContext(), this);
+        wordCountStory = wordCountStoryBook(storyPracticeDataList);
+        textToSpeech = new TextToSpeech(getApplicationContext(), this);
     }
 
     @Override
@@ -178,8 +191,11 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordedBtnView.setImageResource(R.drawable.recorded);
         recordBtnView.setImageResource(R.drawable.rec);
         playBtnView.setImageResource(R.drawable.play);
+        recordedText.setText("Listen");
+        recText.setText("Record");
+        playText.setText("Play");
         currPracticeData = storyPracticeDataList[currStoryPracticeDataIdx];
-        //wordImageView.setImageResource(currPracticeData.id_);
+        storyImageView.setImageResource(currPracticeData.id_);
     }
 
     @Override
@@ -246,6 +262,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                 recordedBtnView.setImageResource(R.drawable.recorded_play);
                 recordBtnView.setEnabled(false);
                 playBtnView.setEnabled(false);
+                recordedText.setText("Reading");
                 int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_FLUSH, null, "");
             }
             else if (v.getId() == R.id.recBtn2) {
@@ -253,9 +270,11 @@ public class StoryPracticeActivity extends AppCompatActivity
                     userSelectedOptIdx = 5;
                     stopStoryRecording();
                     recordBtnView.setImageResource(R.drawable.rec);
+                    recText.setText("Record");
                 } else {
                     userSelectedOptIdx = 4;
                     recordBtnView.setImageResource(R.drawable.rec_progress);
+                    recText.setText("Recording");
                     if (checkPermissionFromDevice()) {
                         startWordRecording();
                     } else {
@@ -266,11 +285,13 @@ public class StoryPracticeActivity extends AppCompatActivity
             else if (v.getId() == R.id.playBtn2){
                 if (userSelectedOptIdx == 6) {
                     playBtnView.setImageResource(R.drawable.play);
+                    playText.setText("Play");
                     stopWordPlay();
                     userSelectedOptIdx = -1;
                 } else {
                     userSelectedOptIdx = 6;
                     playBtnView.setImageResource(R.drawable.pause);
+                    playText.setText("In-Play");
                     startWordPlay();
                 }
             }
@@ -279,9 +300,8 @@ public class StoryPracticeActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        */
         return true;
     }
 
@@ -339,6 +359,14 @@ public class StoryPracticeActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                playBtnView.setImageResource(R.drawable.play);
+                playText.setText("Play");
+                userSelectedOptIdx = -1;
+            }
+        });
         mediaPlayer.start();
     }
 
@@ -406,5 +434,20 @@ public class StoryPracticeActivity extends AppCompatActivity
         int record_audio_results = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
         return write_external_storage_result == PackageManager.PERMISSION_GRANTED &&
                 record_audio_results == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private int wordCountStoryBook(StoryPracticeDataModel storyDataList[]) {
+        int wordCount = 0;
+        for (int i = 0; i < storyDataList.length; i++) {
+            wordCount += countWordString(storyDataList[i].word);
+        }
+        return wordCount;
+    }
+
+    private int countWordString(String inputStr) {
+        String words = inputStr.trim();
+        if (words.isEmpty())
+            return 0;
+        return words.split("\\s+").length;
     }
 }
