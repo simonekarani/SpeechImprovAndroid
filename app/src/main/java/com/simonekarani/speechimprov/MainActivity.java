@@ -21,6 +21,7 @@ import android.view.WindowManager;
 
 import com.simonekarani.speechimprov.model.MainScreenData;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
+import com.simonekarani.speechimprov.report.SpeechImprovReportActivity;
 import com.simonekarani.speechimprov.speechpractice.SpeechPracticeActivity;
 import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements MainScreenDataAda
                 intent = new Intent(this, SpeechPracticeActivity.class);
                 break;
             case MainScreenData.SPEECH_ANALYSIS_ID:
-                intent = new Intent(this, SpeechPracticeActivity.class);
+                intent = new Intent(this, SpeechImprovReportActivity.class);
                 break;
             default:
                 //intent = new Intent(this, MoralMachineActivity.class);

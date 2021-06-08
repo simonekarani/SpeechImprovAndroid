@@ -98,7 +98,6 @@ public class StoryPracticeActivity extends AppCompatActivity
     private TextView recText = null;
     private TextView playText = null;
     private TextView wordCountText = null;
-    private TextView wpmText = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
@@ -112,7 +111,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private ArrayList<String> speechResultList = new ArrayList<>();
     private ArrayList<Integer> wordPracticeDataArray = new ArrayList<>();
     private int userResultCount = 0;
-    private int currWordSetDataIdx = 0;
+    private int currStoryPageIdx = 0;
     private int currStoryPracticeDataIdx = 0;
     private int userSelectedOptIdx = 0;
     private StoryPracticeDataModel currPracticeData = null;
@@ -125,7 +124,6 @@ public class StoryPracticeActivity extends AppCompatActivity
         setTitle("Practice Speech with Stories");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        currWordSetDataIdx = 0;
         currStoryPracticeDataIdx = 0;
         userResultCount = 0;
         wordPracticeDataArray.add(currStoryPracticeDataIdx);
@@ -135,6 +133,7 @@ public class StoryPracticeActivity extends AppCompatActivity
             Index2GameData.put(i, StoryPracticeData.StoryPracticeList[i]);
         }
         storyPracticeDataList = Index2GameData.get(0);
+        currStoryPageIdx = 0;
 
         Spinner mySpinner = (Spinner)findViewById(R.id.story_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -152,6 +151,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordedText = (TextView) findViewById(R.id.recordedText2);
         recText = (TextView) findViewById(R.id.recText2);
         playText = (TextView) findViewById(R.id.playText2);
+        wordCountText = (TextView) findViewById(R.id.wordCountText2);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         prevImageView.setOnClickListener(myOnClickListener);
@@ -161,6 +161,8 @@ public class StoryPracticeActivity extends AppCompatActivity
         playBtnView.setOnClickListener(myOnClickListener);
 
         wordCountStory = wordCountStoryBook(storyPracticeDataList);
+        wordCountText.setText("# of Words: " + wordCountStory);
+
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
     }
 
@@ -173,17 +175,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     @Override
     protected void onRestart() {
         super.onRestart();
-
-        if (userResultCount < MAX_WORD_PRACTICE_COUNT) {
-            updateStoryImprovView();
-        }
-        else {
-            /*Intent intent = new Intent(this, MDilemmaResultActivity.class);
-            Bundle resultBundle = new Bundle();
-            resultBundle.putParcelableArrayList("dilemmaResult", mDilemmaResultList);
-            intent.putExtras(resultBundle);
-            startActivity(intent);*/
-        }
+        updateStoryImprovView();
     }
 
     private void updateStoryImprovView() {
@@ -194,7 +186,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordedText.setText("Listen");
         recText.setText("Record");
         playText.setText("Play");
-        currPracticeData = storyPracticeDataList[currStoryPracticeDataIdx];
+        currPracticeData = storyPracticeDataList[currStoryPageIdx];
         storyImageView.setImageResource(currPracticeData.id_);
     }
 
@@ -219,9 +211,21 @@ public class StoryPracticeActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            recordedBtnView.setImageResource(R.drawable.recorded);
-                            recordBtnView.setEnabled(true);
-                            playBtnView.setEnabled(true);
+                            if (currStoryPageIdx < storyPracticeDataList.length-1) {
+                                currStoryPageIdx++;
+                                currPracticeData = storyPracticeDataList[currStoryPageIdx];
+                                storyImageView.setImageResource(currPracticeData.id_);
+                                int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_ADD, null, "");
+                                textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
+                            } else {
+                                recordedBtnView.setImageResource(R.drawable.recorded);
+                                recordBtnView.setEnabled(true);
+                                playBtnView.setEnabled(true);
+                                recordedText.setText("Listen");
+                                currStoryPageIdx = 0;
+                                currPracticeData = storyPracticeDataList[currStoryPageIdx];
+                                storyImageView.setImageResource(currPracticeData.id_);
+                            }
                         }
                     });
                 }
@@ -263,7 +267,9 @@ public class StoryPracticeActivity extends AppCompatActivity
                 recordBtnView.setEnabled(false);
                 playBtnView.setEnabled(false);
                 recordedText.setText("Reading");
+
                 int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_FLUSH, null, "");
+                textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
             }
             else if (v.getId() == R.id.recBtn2) {
                 if (userSelectedOptIdx == 4) {

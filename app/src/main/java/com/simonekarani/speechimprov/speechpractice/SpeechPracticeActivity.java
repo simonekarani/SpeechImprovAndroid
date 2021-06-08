@@ -194,6 +194,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
                             recordedBtnView.setImageResource(R.drawable.recorded);
                             recordBtnView.setEnabled(true);
                             playBtnView.setEnabled(true);
+                            recordedText.setText("Listen");
                         }
                     });
                 }

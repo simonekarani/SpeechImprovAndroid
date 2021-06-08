@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.simonekarani.speechimprov">
 
     <application
@@ -10,19 +11,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeechImprov">
 
-        <!--
-               Set to true if your app is Standalone, that is, it does not require the handheld
-               app to run.
-        -->
         <activity
             android:name=".wordpractice.WordPracticeActivity"
             android:label="@string/title_activity_word_practice" />
-
         <activity
             android:name=".storypractice.StoryPracticeActivity"
             android:label="@string/title_activity_story_practice" />
         <activity
             android:name=".speechpractice.SpeechPracticeActivity"
+            android:label="@string/title_activity_speech_practice" />
+        <activity
+            android:name=".report.SpeechImprovReportActivity"
             android:label="@string/title_activity_speech_practice" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -36,11 +35,10 @@
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
     </application>
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>
