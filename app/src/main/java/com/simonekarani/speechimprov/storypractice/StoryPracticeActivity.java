@@ -11,11 +11,13 @@ package com.simonekarani.speechimprov.storypractice;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
@@ -67,6 +69,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
+    private final static String KEY_STORY_SCROLLVIEW = "StoryPracticeScroller";
 
     private final static String STORY_INSTR = "Practice Speech with story book reading. Press Next to view pages of the story book.";
             /*"- Press Word Play for correct pronunciation\n" +
@@ -77,7 +80,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private java.util.HashMap<Integer, StoryPracticeDataModel[]> Index2GameData = new HashMap<Integer,StoryPracticeDataModel[]>();
 
     private final String[] TherapyStories = {
-            "A Very Funny Fairy", "Talented Waiter Tina", "Go, Kiki, Go!", "Kiki and Gary", "Ted and Todd - 1",
+            "A Very Funny Fairy", "Talented Waiter", "Go, Kiki, Go!", "Kiki and Gary", "Ted and Todd - 1",
             "Ted and Todd - 2", "Pea will Play Ball", "Bumble Bee", "Smelly Zoo"
     };
 
@@ -113,7 +116,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private int userResultCount = 0;
     private int currStoryPageIdx = 0;
     private int currStoryPracticeDataIdx = 0;
-    private int userSelectedOptIdx = 0;
+    private int userSelectedOptIdx = -1;
     private StoryPracticeDataModel currPracticeData = null;
     private String recWordPath = null;
 
@@ -135,11 +138,15 @@ public class StoryPracticeActivity extends AppCompatActivity
         storyPracticeDataList = Index2GameData.get(0);
         currStoryPageIdx = 0;
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String menuItem = sharedPreferences.getString(KEY_STORY_SCROLLVIEW, "A Very Funny Fairy");
+
         Spinner mySpinner = (Spinner)findViewById(R.id.story_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 R.layout.story_row, R.id.story_row_text, TherapyStories);
         mySpinner.setAdapter(adapter);
         mySpinner.setOnItemSelectedListener(this);
+        mySpinner.setSelection( adapter.getPosition(menuItem) );
 
         instrTextView = (TextView) findViewById(R.id.instrText2);
         prevImageView = (Button) findViewById(R.id.prevImage2);
@@ -160,10 +167,13 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordBtnView.setOnClickListener(myOnClickListener);
         playBtnView.setOnClickListener(myOnClickListener);
 
+        prevImageView.setAlpha(0.5f);
+
         wordCountStory = wordCountStoryBook(storyPracticeDataList);
         wordCountText.setText("# of Words: " + wordCountStory);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
+        textToSpeech.setSpeechRate(0.8f);
     }
 
     @Override
@@ -213,16 +223,25 @@ public class StoryPracticeActivity extends AppCompatActivity
                         public void run() {
                             if (currStoryPageIdx < storyPracticeDataList.length-1) {
                                 currStoryPageIdx++;
+                                prevImageView.setAlpha(1.0f);
+                                if (currStoryPageIdx == storyPracticeDataList.length-1) {
+                                    nextImageView.setAlpha(0.5f);
+                                }
+                                else {
+                                    nextImageView.setAlpha(1.0f);
+                                }
+
                                 currPracticeData = storyPracticeDataList[currStoryPageIdx];
                                 storyImageView.setImageResource(currPracticeData.id_);
                                 int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_ADD, null, "");
                                 textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
                             } else {
                                 recordedBtnView.setImageResource(R.drawable.recorded);
-                                recordBtnView.setEnabled(true);
-                                playBtnView.setEnabled(true);
                                 recordedText.setText("Listen");
                                 currStoryPageIdx = 0;
+                                prevImageView.setAlpha(0.5f);
+                                nextImageView.setAlpha(1.0f);
+
                                 currPracticeData = storyPracticeDataList[currStoryPageIdx];
                                 storyImageView.setImageResource(currPracticeData.id_);
                             }
@@ -249,27 +268,38 @@ public class StoryPracticeActivity extends AppCompatActivity
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.prevImage2) {
-                userSelectedOptIdx = 0;
-
-                onRestart();
+                if (currStoryPageIdx > 0) {
+                    currStoryPageIdx--;
+                    currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
+                    currPracticeData = storyPracticeDataList[currStoryPageIdx];
+                    storyImageView.setImageResource(currPracticeData.id_);
+                    nextImageView.setAlpha(1.0f);
+                }
+                if (currStoryPageIdx == 0) {
+                    prevImageView.setAlpha(0.5f);
+                }
             }
             else if (v.getId() == R.id.nextImage2) {
-                userSelectedOptIdx = 1;
-                currStoryPracticeDataIdx++;
-                currStoryPracticeDataIdx = currStoryPracticeDataIdx % storyPracticeDataList.length;
-                currPracticeData = storyPracticeDataList[currStoryPracticeDataIdx];
-
-                onRestart();
+                if (currStoryPageIdx < storyPracticeDataList.length-1) {
+                    currStoryPageIdx++;
+                    currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
+                    currPracticeData = storyPracticeDataList[currStoryPageIdx];
+                    storyImageView.setImageResource(currPracticeData.id_);
+                    prevImageView.setAlpha(1.0f);
+                }
+                if (currStoryPageIdx == storyPracticeDataList.length-1) {
+                    nextImageView.setAlpha(0.5f);
+                }
             }
             else if (v.getId() == R.id.recordedBtn2) {
-                userSelectedOptIdx = 2;
-                recordedBtnView.setImageResource(R.drawable.recorded_play);
-                recordBtnView.setEnabled(false);
-                playBtnView.setEnabled(false);
-                recordedText.setText("Reading");
+                if (userSelectedOptIdx == -1) {
+                    userSelectedOptIdx = 2;
+                    recordedBtnView.setImageResource(R.drawable.recorded_play);
+                    recordedText.setText("Reading");
 
-                int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_FLUSH, null, "");
-                textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
+                    int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_FLUSH, null, "");
+                    textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
+                }
             }
             else if (v.getId() == R.id.recBtn2) {
                 if (userSelectedOptIdx == 4) {
@@ -277,7 +307,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                     stopStoryRecording();
                     recordBtnView.setImageResource(R.drawable.rec);
                     recText.setText("Record");
-                } else {
+                } else if (userSelectedOptIdx == -1) {
                     userSelectedOptIdx = 4;
                     recordBtnView.setImageResource(R.drawable.rec_progress);
                     recText.setText("Recording");
@@ -294,7 +324,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                     playText.setText("Play");
                     stopWordPlay();
                     userSelectedOptIdx = -1;
-                } else {
+                } else if (userSelectedOptIdx == -1) {
                     userSelectedOptIdx = 6;
                     playBtnView.setImageResource(R.drawable.pause);
                     playText.setText("In-Play");
@@ -338,9 +368,6 @@ public class StoryPracticeActivity extends AppCompatActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            playBtnView.setEnabled(false);
-            recordedBtnView.setEnabled(false);
         }
     }
 
@@ -350,15 +377,11 @@ public class StoryPracticeActivity extends AppCompatActivity
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-        playBtnView.setEnabled(true);
-        recordedBtnView.setEnabled(true);
         userSelectedOptIdx = -1;
     }
 
     private void startWordPlay() {
         mediaPlayer = new MediaPlayer();
-        recordedBtnView.setEnabled(false);
-        recordBtnView.setEnabled(false);
         try {
             mediaPlayer.setDataSource(recWordPath);
             mediaPlayer.prepare();
@@ -377,12 +400,11 @@ public class StoryPracticeActivity extends AppCompatActivity
     }
 
     private void stopWordPlay() {
-        recordedBtnView.setEnabled(true);
-        recordBtnView.setEnabled(true);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
         }
+        userSelectedOptIdx = -1;
     }
 
     private void setupMediaRecorder() {
@@ -402,8 +424,13 @@ public class StoryPracticeActivity extends AppCompatActivity
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
+        storyPracticeDataList = Index2GameData.get(pos);
+        currStoryPageIdx = 0;
+        wordCountStory = wordCountStoryBook(storyPracticeDataList);
+        wordCountText.setText("# of Words: " + wordCountStory);
+
+        updatePreferenceSetting(pos);
+        updateStoryImprovView();
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -433,6 +460,15 @@ public class StoryPracticeActivity extends AppCompatActivity
             }
             break;
         }
+    }
+
+    private void updatePreferenceSetting(int selectedIdx) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+
+        String selectedItem = TherapyStories[selectedIdx];
+        edit.putString(KEY_STORY_SCROLLVIEW, selectedItem);
+        edit.commit();
     }
 
     private boolean checkPermissionFromDevice() {
