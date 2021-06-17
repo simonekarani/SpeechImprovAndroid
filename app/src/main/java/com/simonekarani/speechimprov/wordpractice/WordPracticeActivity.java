@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -79,8 +80,8 @@ public class WordPracticeActivity extends AppCompatActivity
     private View.OnClickListener myOnClickListener;
 
     private TextView instrTextView = null;
-    private ImageButton prevImageView = null;
-    private ImageButton nextImageView = null;
+    private Button prevImageView = null;
+    private Button nextImageView = null;
     private ImageView wordImageView = null;
     private ImageButton recordedBtnView = null;
     private ImageButton recordBtnView = null;
@@ -125,8 +126,8 @@ public class WordPracticeActivity extends AppCompatActivity
         mySpinner.setOnItemSelectedListener(this);
 
         instrTextView = (TextView) findViewById(R.id.instrText);
-        prevImageView = (ImageButton) findViewById(R.id.prevImage);
-        nextImageView = (ImageButton) findViewById(R.id.nextImage);
+        prevImageView = (Button) findViewById(R.id.prevImage);
+        nextImageView = (Button) findViewById(R.id.nextImage);
         wordImageView = (ImageView) findViewById(R.id.wordImage);
         recordedBtnView = (ImageButton) findViewById(R.id.recordedBtn);
         recordBtnView = (ImageButton) findViewById(R.id.recBtn);
