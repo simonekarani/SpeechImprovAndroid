@@ -22,6 +22,7 @@ import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +43,7 @@ import android.widget.Toast;
 import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
+import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
 import com.simonekarani.speechimprov.speechpractice.SpeechPracticeActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeData;
@@ -50,6 +52,7 @@ import com.simonekarani.speechimprov.wordpractice.WordPracticeDataModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -119,6 +122,9 @@ public class StoryPracticeActivity extends AppCompatActivity
     private int userSelectedOptIdx = -1;
     private StoryPracticeDataModel currPracticeData = null;
     private String recWordPath = null;
+    private SpeechActivityDBHelper mydb ;
+    private long activityStartTimeMs = 0;
+    private long activityEndTimeMs = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +132,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         setContentView(R.layout.activity_story_practice);
         setTitle("Practice Speech with Stories");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mydb = new SpeechActivityDBHelper(this);
 
         currStoryPracticeDataIdx = 0;
         userResultCount = 0;
@@ -188,6 +195,12 @@ public class StoryPracticeActivity extends AppCompatActivity
         updateStoryImprovView();
     }
 
+    @Override
+    public void onBackPressed() {
+        updateStoryReportLog();
+        super.onBackPressed();
+    }
+
     private void updateStoryImprovView() {
         instrTextView.setText(STORY_INSTR);
         recordedBtnView.setImageResource(R.drawable.recorded);
@@ -198,6 +211,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         playText.setText("Play");
         currPracticeData = storyPracticeDataList[currStoryPageIdx];
         storyImageView.setImageResource(currPracticeData.id_);
+        activityStartTimeMs = System.currentTimeMillis();
     }
 
     @Override
@@ -343,6 +357,7 @@ public class StoryPracticeActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        updateStoryReportLog();
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent intent = new Intent(StoryPracticeActivity.this, MainActivity.class);
@@ -462,6 +477,12 @@ public class StoryPracticeActivity extends AppCompatActivity
         }
     }
 
+    private void updateStoryReportLog() {
+        activityEndTimeMs = System.currentTimeMillis();
+        long durationMs = activityEndTimeMs - activityStartTimeMs;
+        mydb.updateSpeechActivity(getCurrDate(), "Story", durationMs);
+    }
+
     private void updatePreferenceSetting(int selectedIdx) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor edit = sharedPreferences.edit();
@@ -491,5 +512,12 @@ public class StoryPracticeActivity extends AppCompatActivity
         if (words.isEmpty())
             return 0;
         return words.split("\\s+").length;
+    }
+
+    private String getCurrDate() {
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(System.currentTimeMillis());
+        String date = DateFormat.format("MM-dd-yyyy", cal).toString();
+        return date;
     }
 }

@@ -37,10 +37,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/reportTitle"
-                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
                 android:text="Activity: "
                 android:textAlignment="textStart"
-                android:textSize="15dp"
+                android:textSize="20dp"
                 android:textStyle="normal" />
 
             <TextView
@@ -48,10 +49,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textActivity"
-                android:paddingTop="5dp"
-                android:text="Duration (secs): "
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
+                android:text="Duration: "
                 android:textAlignment="textStart"
-                android:textSize="15dp"
+                android:textSize="20dp"
                 android:textStyle="normal" />
 
         </RelativeLayout>

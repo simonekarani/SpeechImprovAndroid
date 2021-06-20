@@ -20,6 +20,7 @@ import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
+import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,6 +47,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -88,8 +91,11 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
     private ArrayList<String> speechResultList = new ArrayList<>();
     private int userResultCount = 0;
-    private int userSelectedOptIdx = 0;
+    private int userSelectedOptIdx = -1;
     private String recWordPath = null;
+    private SpeechActivityDBHelper mydb ;
+    private long activityStartTimeMs = 0;
+    private long activityEndTimeMs = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +103,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         setContentView(R.layout.activity_speech_practice);
         setTitle("Speech Practice");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mydb = new SpeechActivityDBHelper(this);
 
         instrTextView = (TextView) findViewById(R.id.speech_instr);
         recordedBtnView = (ImageButton) findViewById(R.id.recordedBtn3);
@@ -148,6 +155,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         writeToFile(speechTextView.getText().toString(), getApplicationContext());
+        updateSpeechReportLog();
         super.onBackPressed();
     }
 
@@ -167,7 +175,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         recordedText.setText("Listen");
         recText.setText("Record");
         playText.setText("Play");
-        //wordImageView.setImageResource(currPracticeData.id_);
+        activityStartTimeMs = System.currentTimeMillis();
     }
 
     @Override
@@ -192,8 +200,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             recordedBtnView.setImageResource(R.drawable.recorded);
-                            recordBtnView.setEnabled(true);
-                            playBtnView.setEnabled(true);
                             recordedText.setText("Listen");
                         }
                     });
@@ -220,8 +226,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
             if (v.getId() == R.id.recordedBtn3) {
                 userSelectedOptIdx = 2;
                 recordedBtnView.setImageResource(R.drawable.recorded_play);
-                recordBtnView.setEnabled(false);
-                playBtnView.setEnabled(false);
                 recordedText.setText("Reading");
                 int speech = textToSpeech.speak(speechTextView.getText(), TextToSpeech.QUEUE_FLUSH, null, "");
             }
@@ -271,6 +275,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         writeToFile(speechTextView.getText().toString(), getApplicationContext());
+        updateSpeechReportLog();
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent intent = new Intent(SpeechPracticeActivity.this, MainActivity.class);
@@ -288,7 +293,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
         if (checkPermissionFromDevice()) {
             recWordPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
                     UUID.randomUUID().toString() + "_audio_record.3gp";
-            Log.i("Rec Speech", recWordPath);
             setupMediaRecorder();
             try {
                 mediaRecorder.prepare();
@@ -296,10 +300,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             mRecStartTime = System.currentTimeMillis();
-            playBtnView.setEnabled(false);
-            recordedBtnView.setEnabled(false);
         }
     }
 
@@ -309,8 +310,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-        playBtnView.setEnabled(true);
-        recordedBtnView.setEnabled(true);
         userSelectedOptIdx = -1;
 
         mRecEndTime = System.currentTimeMillis();
@@ -326,8 +325,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
     private void startWordPlay() {
         mediaPlayer = new MediaPlayer();
-        recordedBtnView.setEnabled(false);
-        recordBtnView.setEnabled(false);
         try {
             mediaPlayer.setDataSource(recWordPath);
             mediaPlayer.prepare();
@@ -346,12 +343,11 @@ public class SpeechPracticeActivity extends AppCompatActivity
     }
 
     private void stopWordPlay() {
-        recordedBtnView.setEnabled(true);
-        recordBtnView.setEnabled(true);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
         }
+        userSelectedOptIdx = -1;
     }
 
     private void setupMediaRecorder() {
@@ -404,6 +400,12 @@ public class SpeechPracticeActivity extends AppCompatActivity
         }
     }
 
+    private void updateSpeechReportLog() {
+        activityEndTimeMs = System.currentTimeMillis();
+        long durationMs = activityEndTimeMs - activityStartTimeMs;
+        mydb.updateSpeechActivity(getCurrDate(), "Speech", durationMs);
+    }
+
     private boolean checkPermissionFromDevice() {
         int write_external_storage_result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int record_audio_results = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
@@ -415,6 +417,10 @@ public class SpeechPracticeActivity extends AppCompatActivity
         writeToFile(speechTextView.getText().toString(), getApplicationContext());
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(SpeechPracticeActivity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        wordCountSpeech = countWordString(speechTextView.getText().toString());
+        String wordCountStr = "# of Words: " + wordCountSpeech;
+        wordCountText.setText(wordCountStr);
     }
 
     private void writeToFile(String data, Context context) {
@@ -470,5 +476,12 @@ public class SpeechPracticeActivity extends AppCompatActivity
         if (words.isEmpty())
             return 0;
         return words.split("\\s+").length;
+    }
+
+    private String getCurrDate() {
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(System.currentTimeMillis());
+        String date = DateFormat.format("MM-dd-yyyy", cal).toString();
+        return date;
     }
 }
