@@ -22,11 +22,11 @@
         android:textColor="@android:color/white"
         android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/wordCopyrightText"
+        app:layout_constraintBottom_toTopOf="@+id/readWordText"
         app:layout_constraintEnd_toStartOf="@+id/nextImage"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/instrText" />
+        app:layout_constraintTop_toBottomOf="@+id/separator" />
 
     <Button
         android:id="@+id/nextImage"
@@ -45,16 +45,16 @@
         android:textColor="@android:color/white"
         android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/wordCopyrightText"
+        app:layout_constraintBottom_toTopOf="@+id/readWordText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/prevImage"
-        app:layout_constraintTop_toBottomOf="@+id/instrText" />
+        app:layout_constraintTop_toBottomOf="@+id/separator" />
 
     <ImageButton
         android:id="@+id/recordedBtn"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:layout_weight="1"
@@ -66,12 +66,12 @@
         app:layout_constraintEnd_toStartOf="@+id/recBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wordImage" />
+        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText" />
 
     <ImageButton
         android:id="@+id/recBtn"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:layout_weight="1"
@@ -83,12 +83,12 @@
         app:layout_constraintEnd_toStartOf="@+id/playBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recordedBtn"
-        app:layout_constraintTop_toBottomOf="@+id/wordImage" />
+        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText" />
 
     <ImageButton
         android:id="@+id/playBtn"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:layout_weight="1"
@@ -100,7 +100,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recBtn"
-        app:layout_constraintTop_toBottomOf="@+id/wordImage" />
+        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText" />
 
     <ImageView
         android:id="@+id/wordImage"
@@ -113,14 +113,14 @@
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText" />
+        app:layout_constraintTop_toBottomOf="@+id/readWordText" />
 
     <Spinner
         android:id="@+id/word_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
         app:layout_constraintBottom_toTopOf="@+id/separator"
@@ -133,7 +133,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="11dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
         android:text="Therapy Games: "
@@ -144,21 +144,22 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/instrText"
+        android:id="@+id/readWordText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="left"
-        android:text="Repeat the words below the image, and check for correct pronunciation?"
+        android:gravity="center"
+        android:text="ReadText"
+        android:textAlignment="center"
+        android:textColor="#216EF3"
         android:textSize="22dp"
-        android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/prevImage"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toTopOf="@+id/wordImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator" />
+        app:layout_constraintTop_toBottomOf="@+id/prevImage" />
 
     <TextView
         android:id="@+id/wordCopyrightText"
@@ -170,12 +171,12 @@
         android:layout_marginBottom="2dp"
         android:gravity="center"
         android:text="Copyright &#169; LEADERSPROJECT, Columbia University"
-        android:textSize="11dp"
+        android:textSize="5dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/wordImage"
+        app:layout_constraintBottom_toTopOf="@+id/recBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prevImage" />
+        app:layout_constraintTop_toBottomOf="@+id/wordImage" />
 
     <TextView
         android:id="@+id/recordedText"
@@ -186,7 +187,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="Listen"
-        android:textSize="16dp"
+        android:textSize="18dp"
         app:layout_constraintEnd_toStartOf="@+id/recText"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -201,7 +202,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="Record"
-        android:textSize="16dp"
+        android:textSize="18dp"
         app:layout_constraintEnd_toStartOf="@+id/playText"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recordedText"
@@ -216,7 +217,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="Play"
-        android:textSize="16dp"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recText"
@@ -229,9 +230,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="5dp"
         android:background="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/instrText"
+        app:layout_constraintBottom_toTopOf="@+id/prevImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnerTitle" />
@@ -245,8 +246,8 @@
         android:layout_marginEnd="20dp"
         android:gravity="left"
         android:text="What we Heard?"
-        android:textSize="22dp"
-        android:textStyle="bold"
+        android:textSize="18dp"
+        android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recordedText" />
@@ -258,30 +259,15 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/my_border"
         android:gravity="center"
         android:text=""
         android:textSize="32dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/heardText" />
-
-    <TextView
-        android:id="@+id/scoreText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:text="Score: - / -"
-        android:textSize="30dp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/repeatText" />
+        app:layout_constraintTop_toBottomOf="@+id/heardText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

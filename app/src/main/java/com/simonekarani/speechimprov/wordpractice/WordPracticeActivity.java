@@ -37,14 +37,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
-import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +90,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private static ArrayList<MainScreenDataModel> data;
     private View.OnClickListener myOnClickListener;
 
-    private TextView instrTextView = null;
+    private TextView readWordView = null;
     private Button prevImageView = null;
     private Button nextImageView = null;
     private ImageView wordImageView = null;
@@ -155,7 +153,7 @@ public class WordPracticeActivity extends AppCompatActivity
         mySpinner.setOnItemSelectedListener(this);
         mySpinner.setSelection( adapter.getPosition(menuItem) );
 
-        instrTextView = (TextView) findViewById(R.id.instrText);
+        readWordView = (TextView) findViewById(R.id.readWordText);
         prevImageView = (Button) findViewById(R.id.prevImage);
         nextImageView = (Button) findViewById(R.id.nextImage);
         wordImageView = (ImageView) findViewById(R.id.wordImage);
@@ -256,7 +254,6 @@ public class WordPracticeActivity extends AppCompatActivity
     }
 
     private void updateWordImprovView() {
-        instrTextView.setText(WORD_INSTR);
         recordedBtnView.setImageResource(R.drawable.recorded);
         recordBtnView.setImageResource(R.drawable.rec);
         playBtnView.setImageResource(R.drawable.play);
@@ -265,6 +262,7 @@ public class WordPracticeActivity extends AppCompatActivity
         int wordIdx = sharedPreferences.getInt(KEY_WORD_LISTVIEW, 0);
         currPracticeData = wordPracticeDataList[wordIdx];
         wordImageView.setImageResource(currPracticeData.id_);
+        readWordView.setText(currPracticeData.word);
         activityStartTimeMs = System.currentTimeMillis();
 
         if (wordIdx == 0) {
@@ -322,6 +320,7 @@ public class WordPracticeActivity extends AppCompatActivity
                     currWordPracticeDataIdx = currWordPracticeDataIdx % wordPracticeDataList.length;
                     currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
                     wordImageView.setImageResource(currPracticeData.id_);
+                    readWordView.setText(currPracticeData.word);
                     nextImageView.setAlpha(1.0f);
                 }
                 if (currWordPracticeDataIdx == 0) {
@@ -335,6 +334,7 @@ public class WordPracticeActivity extends AppCompatActivity
                     currWordPracticeDataIdx = currWordPracticeDataIdx % wordPracticeDataList.length;
                     currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
                     wordImageView.setImageResource(currPracticeData.id_);
+                    readWordView.setText(currPracticeData.word);
                     prevImageView.setAlpha(1.0f);
                 }
                 if (currWordPracticeDataIdx == wordPracticeDataList.length-1) {

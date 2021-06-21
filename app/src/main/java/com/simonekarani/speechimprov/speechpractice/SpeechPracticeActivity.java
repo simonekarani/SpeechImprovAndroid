@@ -80,7 +80,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
     private TextView recText = null;
     private TextView playText = null;
     private TextView wordCountText = null;
-    private TextView wpmText = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
@@ -114,7 +113,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
         recText = (TextView) findViewById(R.id.recText3);
         playText = (TextView) findViewById(R.id.playText3);
         wordCountText = (TextView) findViewById(R.id.wordCountText);
-        wpmText = (TextView) findViewById(R.id.wpmText);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         recordedBtnView.setOnClickListener(myOnClickListener);
@@ -320,7 +318,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
         int wpmValue = (wordCountSpeech * 60) / durationSecs;
         String wordCountStr = "Words Per Min (WPM): " + wpmValue;
-        wpmText.setText(wordCountStr);
     }
 
     private void startWordPlay() {
