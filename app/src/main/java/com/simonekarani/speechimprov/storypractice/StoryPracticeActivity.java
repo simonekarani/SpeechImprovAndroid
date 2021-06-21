@@ -102,6 +102,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private TextView recordedText = null;
     private TextView recText = null;
     private TextView playText = null;
+    private TextView readText = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
@@ -162,6 +163,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordedText = (TextView) findViewById(R.id.recordedText2);
         recText = (TextView) findViewById(R.id.recText2);
         playText = (TextView) findViewById(R.id.playText2);
+        readText = (TextView) findViewById(R.id.readtext);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         prevImageView.setOnClickListener(myOnClickListener);
@@ -205,6 +207,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         playText.setText("Play");
         currPracticeData = storyPracticeDataList[currStoryPageIdx];
         storyImageView.setImageResource(currPracticeData.id_);
+        readText.setText(currPracticeData.word);
         activityStartTimeMs = System.currentTimeMillis();
     }
 
@@ -241,6 +244,7 @@ public class StoryPracticeActivity extends AppCompatActivity
 
                                 currPracticeData = storyPracticeDataList[currStoryPageIdx];
                                 storyImageView.setImageResource(currPracticeData.id_);
+                                readText.setText(currPracticeData.word);
                                 int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_ADD, null, "");
                                 textToSpeech.playSilentUtterance(1700, TextToSpeech.QUEUE_ADD, null);
                             } else {
@@ -252,6 +256,7 @@ public class StoryPracticeActivity extends AppCompatActivity
 
                                 currPracticeData = storyPracticeDataList[currStoryPageIdx];
                                 storyImageView.setImageResource(currPracticeData.id_);
+                                readText.setText(currPracticeData.word);
                             }
                         }
                     });
@@ -281,6 +286,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                     currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
                     currPracticeData = storyPracticeDataList[currStoryPageIdx];
                     storyImageView.setImageResource(currPracticeData.id_);
+                    readText.setText(currPracticeData.word);
                     nextImageView.setAlpha(1.0f);
                 }
                 if (currStoryPageIdx == 0) {
@@ -293,6 +299,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                     currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
                     currPracticeData = storyPracticeDataList[currStoryPageIdx];
                     storyImageView.setImageResource(currPracticeData.id_);
+                    readText.setText(currPracticeData.word);
                     prevImageView.setAlpha(1.0f);
                 }
                 if (currStoryPageIdx == storyPracticeDataList.length-1) {
