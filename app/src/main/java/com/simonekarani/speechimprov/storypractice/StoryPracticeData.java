@@ -4,11 +4,12 @@ import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeDataModel;
 
 public class StoryPracticeData {
-
-    public static final StoryPracticeDataModel wStory1Screen1  = new StoryPracticeDataModel(R.drawable.funnyfairy_1,
-            "A Very Funny Fairy");
-    public static final StoryPracticeDataModel wStory1Screen2  = new StoryPracticeDataModel(R.drawable.funnyfairy_2,
+    public static final StoryPracticeDataModel wStory1Screen1  = new StoryPracticeDataModel(R.drawable.funnyfairy_2,
+            "F, & V, Story");
+    public static final StoryPracticeDataModel wStory1Screen1a  = new StoryPracticeDataModel(R.drawable.funnyfairy_2,
             "Practice with us, F, & V, Story / rhymes to improve speech after surgery to repair a cleft palate By Catherine Crowley, JD, PhD, CCC-SLP, Teacher's College, Columbia University");
+    public static final StoryPracticeDataModel wStory1Screen2  = new StoryPracticeDataModel(R.drawable.funnyfairy_1,
+            "A Very Funny Fairy");
     public static final StoryPracticeDataModel wStory1Screen3  = new StoryPracticeDataModel(R.drawable.funnyfairy_3,
             "Vivi, a very funny fairy, flew very far from home.");
     public static final StoryPracticeDataModel wStory1Screen4  = new StoryPracticeDataModel(R.drawable.funnyfairy_4,
@@ -28,10 +29,14 @@ public class StoryPracticeData {
     public static final StoryPracticeDataModel wStory1Screen11 = new StoryPracticeDataModel(R.drawable.funnyfairy_11,
             "Full from laughing, Vivi flew home. Fly home, Vivi fly home.");
 
-    public static final StoryPracticeDataModel wStory2Screen1   = new StoryPracticeDataModel(R.drawable.waitertina_1,
-            "Talented Waiter Tina Written by Jen Posner, and Grace Koehler Illustrated by Madison Bill");
-    public static final StoryPracticeDataModel wStory2Screen2   = new StoryPracticeDataModel(R.drawable.waitertina_2,
+    public static final StoryPracticeDataModel wStory2Screen1   = new StoryPracticeDataModel(R.drawable.waitertina_2,
+            "T, and D, Stories");
+    public static final StoryPracticeDataModel wStory2Screen1a   = new StoryPracticeDataModel(R.drawable.waitertina_2,
             "Practice with us!, T, and D, Stories and rhymes to improve speech after surgery to repair a cleft palate");
+    public static final StoryPracticeDataModel wStory2Screen2   = new StoryPracticeDataModel(R.drawable.waitertina_1,
+            "Talented Waiter Tina");
+    public static final StoryPracticeDataModel wStory2Screen2a   = new StoryPracticeDataModel(R.drawable.waitertina_1,
+            "Talented Waiter Tina Written by Jen Posner, and Grace Koehler Illustrated by Madison Bill");
     public static final StoryPracticeDataModel wStory2Screen3   = new StoryPracticeDataModel(R.drawable.waitertina_3,
             "In a tiny town on Tater Tot Mountain, down a winding road");
     public static final StoryPracticeDataModel wStory2Screen4   = new StoryPracticeDataModel(R.drawable.waitertina_4,
@@ -59,10 +64,14 @@ public class StoryPracticeData {
     public static final StoryPracticeDataModel wStory2Screen15 = new StoryPracticeDataModel(R.drawable.waitertina_15,
             "Tomorrow I'll tell a tale.");
 
-    public static final StoryPracticeDataModel wStory3Screen1   = new StoryPracticeDataModel(R.drawable.gokiki_1,
-            "Practice With Us! Go, Kiki, Go! Written by Katrina Lica. Illustrated by Tina Yeung. Directed by Catherine Crowley");
-    public static final StoryPracticeDataModel wStory3Screen2   = new StoryPracticeDataModel(R.drawable.gokiki_2,
+    public static final StoryPracticeDataModel wStory3Screen1   = new StoryPracticeDataModel(R.drawable.gokiki_2,
+            "K, & G, Stories");
+    public static final StoryPracticeDataModel wStory3Screen1a   = new StoryPracticeDataModel(R.drawable.gokiki_2,
             "Practice With Us!, K, & G, Stories / rhymes to improve speech after surgery to repair a cleft palate. Catherine Crowley Director. Teacher's College, Columbia University");
+    public static final StoryPracticeDataModel wStory3Screen2   = new StoryPracticeDataModel(R.drawable.gokiki_1,
+            "Go, Kiki, Go!");
+    public static final StoryPracticeDataModel wStory3Screen2a   = new StoryPracticeDataModel(R.drawable.gokiki_1,
+            "Practice With Us! Go, Kiki, Go! Written by Katrina Lica. Illustrated by Tina Yeung. Directed by Catherine Crowley");
     public static final StoryPracticeDataModel wStory3Screen3   = new StoryPracticeDataModel(R.drawable.gokiki_3,
             "When she awakes, A huge yummy cake Kiki Cow will make.");
     public static final StoryPracticeDataModel wStory3Screen4   = new StoryPracticeDataModel(R.drawable.gokiki_4,
@@ -76,10 +85,15 @@ public class StoryPracticeData {
     public static final StoryPracticeDataModel wStory3Screen8   = new StoryPracticeDataModel(R.drawable.gokiki_8,
             "In a kayak, Kiki Cow will go. Kiki Cow will go, go, go on our clear lake make more mango cake!");
 
-    public static final StoryPracticeDataModel wStory4Screen1   = new StoryPracticeDataModel(R.drawable.kikigary_1,
-            "Practice With Us! Kiki and Gary. Directed by Catherine Crowley. Written by Kira Harbourne. Illustrated by Gary Milam");
-    public static final StoryPracticeDataModel wStory4Screen2   = new StoryPracticeDataModel(R.drawable.kikigary_2,
+
+    public static final StoryPracticeDataModel wStory4Screen1   = new StoryPracticeDataModel(R.drawable.kikigary_2,
+            "K, G, Stories");
+    public static final StoryPracticeDataModel wStory4Screen1a   = new StoryPracticeDataModel(R.drawable.kikigary_2,
             "Practice With Us., K, G, Stories / rhymes to improve speech after surgery to repair cleft palate. Director, Catherine Crowley, Teacher's College, Columbia University");
+    public static final StoryPracticeDataModel wStory4Screen2   = new StoryPracticeDataModel(R.drawable.kikigary_1,
+            "Kiki and Gary");
+    public static final StoryPracticeDataModel wStory4Screen2a   = new StoryPracticeDataModel(R.drawable.kikigary_1,
+            "Practice With Us! Kiki and Gary. Directed by Catherine Crowley. Written by Kira Harbourne. Illustrated by Gary Milam");
     public static final StoryPracticeDataModel wStory4Screen3   = new StoryPracticeDataModel(R.drawable.kikigary_3,
             "Kiki Kangaroo can croak like a crow. Can you? Croak Croak");
     public static final StoryPracticeDataModel wStory4Screen4   = new StoryPracticeDataModel(R.drawable.kikigary_4,
@@ -117,12 +131,17 @@ public class StoryPracticeData {
     public static final StoryPracticeDataModel wStory4Screen20  = new StoryPracticeDataModel(R.drawable.kikigary_20,
             "Gary Gorilla Can Grin Giggle Go Groom Growl Glue Grow Gargle");
 
-    public static final StoryPracticeDataModel wStory5Screen1   = new StoryPracticeDataModel(R.drawable.tedtodd_1,
-            "Practice With Us! Ted and Todd: A Toad Tale Part 1 Written by Caroline Tobias, Alease Holden, and Pamela Kotorac, " +
-                    "Illustrated by Lisa Goldberg, Directed by Catherine Crowley");
-    public static final StoryPracticeDataModel wStory5Screen2   = new StoryPracticeDataModel(R.drawable.tedtodd_2,
+
+    public static final StoryPracticeDataModel wStory5Screen1   = new StoryPracticeDataModel(R.drawable.tedtodd_2,
+            "D, and T, Stories");
+    public static final StoryPracticeDataModel wStory5Screen1a   = new StoryPracticeDataModel(R.drawable.tedtodd_2,
             "Practice With Us!, D, and T, Stories / rhymes to improve speech after surgery to repair a cleft palate " +
                     "Director Catherine Crowley, Teachers College, Columbia University");
+    public static final StoryPracticeDataModel wStory5Screen2   = new StoryPracticeDataModel(R.drawable.tedtodd_1,
+            "Ted and Todd: A Toad Tale Part 1");
+    public static final StoryPracticeDataModel wStory5Screen2a   = new StoryPracticeDataModel(R.drawable.tedtodd_1,
+            "Practice With Us! Ted and Todd: A Toad Tale Part 1 Written by Caroline Tobias, Alease Holden, and Pamela Kotorac, " +
+                    "Illustrated by Lisa Goldberg, Directed by Catherine Crowley");
     public static final StoryPracticeDataModel wStory5Screen3   = new StoryPracticeDataModel(R.drawable.tedtodd_3,
             "Ted had a twin toad. Todd has a twin toad too.");
     public static final StoryPracticeDataModel wStory5Screen4   = new StoryPracticeDataModel(R.drawable.tedtodd_4,
@@ -148,11 +167,15 @@ public class StoryPracticeData {
     public static final StoryPracticeDataModel wStory5Screen14  = new StoryPracticeDataModel(R.drawable.tedtodd_14,
             "Ted told Todd We are dirty and muddy. Don't tattle on me and I won't tattle on you!");
 
-    public static final StoryPracticeDataModel wStory6Screen1   = new StoryPracticeDataModel(R.drawable.tedtodd2__1,
+    public static final StoryPracticeDataModel wStory6Screen1   = new StoryPracticeDataModel(R.drawable.tedtodd2__2,
+            "D, and T, Stories");
+    public static final StoryPracticeDataModel wStory6Screen1a   = new StoryPracticeDataModel(R.drawable.tedtodd2__2,
+            "Practice With Us!, D, and T, Stories / rhymes to improve speech after surgery to repair a cleft palate. Director, Catherine Crowley Teachers College, Columbia University");
+    public static final StoryPracticeDataModel wStory6Screen2   = new StoryPracticeDataModel(R.drawable.tedtodd2__1,
+            "Ted and Todd A Toad Tale Part 2");
+    public static final StoryPracticeDataModel wStory6Screen2a   = new StoryPracticeDataModel(R.drawable.tedtodd2__1,
             "Practice With Us! Ted and Todd A Toad Tale Part 2 Directed by Catherine Crowley, Written by Caroline Tobias, Alease Holden, Pamela Kotorac," +
                     "Illustrated by Lisa Goldberg");
-    public static final StoryPracticeDataModel wStory6Screen2   = new StoryPracticeDataModel(R.drawable.tedtodd2__2,
-            "Practice With Us!, D, and T, Stories / rhymes to improve speech after surgery to repair a cleft palate. Director, Catherine Crowley Teachers College, Columbia University");
     public static final StoryPracticeDataModel wStory6Screen3   = new StoryPracticeDataModel(R.drawable.tedtodd2__3,
             "In Ted and Todd One: Ted told Todd, We are dirty and muddy. Don't tattle on me and I won't tattle on you!" +
                     "When Ted and Todd were home, Tony the toad dad and Tina the toad mom told Ted and Todd, Time to eat dinner.");
@@ -179,10 +202,14 @@ public class StoryPracticeData {
     public static final StoryPracticeDataModel wStory6Screen14  = new StoryPracticeDataModel(R.drawable.tedtodd2__14,
             "Only time will tell! Ta ta!");
 
-    public static final StoryPracticeDataModel wStory7Screen1   = new StoryPracticeDataModel(R.drawable.peaplayball_1,
-            "Pea will Play Ball Written By Visaka Series, and Paulina Smietanka, Illustrated By, Visaka Series, Directed By, Catherine Crowley");
-    public static final StoryPracticeDataModel wStory7Screen2   = new StoryPracticeDataModel(R.drawable.peaplayball_2,
+    public static final StoryPracticeDataModel wStory7Screen1   = new StoryPracticeDataModel(R.drawable.peaplayball_2,
+            "P, & B, Stories");
+    public static final StoryPracticeDataModel wStory7Screen1a   = new StoryPracticeDataModel(R.drawable.peaplayball_2,
             "Practice With Us!, P, & B, Stories / Rhymes to improve speech after surgery to repair a cleft palate Director, Catherine Crowley, Teacher's College, Columbia University");
+    public static final StoryPracticeDataModel wStory7Screen2   = new StoryPracticeDataModel(R.drawable.peaplayball_1,
+            "Pea will Play Ball");
+    public static final StoryPracticeDataModel wStory7Screen2a   = new StoryPracticeDataModel(R.drawable.peaplayball_1,
+            "Pea will Play Ball Written By Visaka Series, and Paulina Smietanka, Illustrated By, Visaka Series, Directed By, Catherine Crowley");
     public static final StoryPracticeDataModel wStory7Screen3   = new StoryPracticeDataModel(R.drawable.peaplayball_3,
             "Pea will play ball by a well Boom, boom, boom");
     public static final StoryPracticeDataModel wStory7Screen4   = new StoryPracticeDataModel(R.drawable.peaplayball_4,
@@ -211,10 +238,14 @@ public class StoryPracticeData {
             "Cleft Palate Tutorial Project Director, Crowley Catherine, CCC-SLP, JD, PhD, Director, Miriam Baigorri, CCC-SLP, MS, MPhil, Copyright, Teacher's College, " +
             "Columbia University, 2015 Leadersproject.org. For more information, crowley@tc.columbia.edu, Creative Commons, Attribution Non-Commercial-No-Derivs 3.0");
 
-    public static final StoryPracticeDataModel wStory8Screen1   = new StoryPracticeDataModel(R.drawable.bumblebee_1,
-            "Practice With Us Bumble bee Bumble bee. Written by Alysia Williams, and Yekaterina Snitkovskaia. Illustrated by, Jinri Kim. Directed by, Catherine Crowley");
-    public static final StoryPracticeDataModel wStory8Screen2   = new StoryPracticeDataModel(R.drawable.bumblebee_2,
+    public static final StoryPracticeDataModel wStory8Screen1   = new StoryPracticeDataModel(R.drawable.bumblebee_2,
+            "P, and B, Stories");
+    public static final StoryPracticeDataModel wStory8Screen1a   = new StoryPracticeDataModel(R.drawable.bumblebee_2,
             "Practice With Us!, P, and B, Stories / rhymes to improve speech after surgery to repair a cleft palate. Director, Catherine Crowley. Teachers College, Columbia University");
+    public static final StoryPracticeDataModel wStory8Screen2   = new StoryPracticeDataModel(R.drawable.bumblebee_1,
+            "Bumble bee Bumble bee.");
+    public static final StoryPracticeDataModel wStory8Screen2a   = new StoryPracticeDataModel(R.drawable.bumblebee_1,
+            "Practice With Us Bumble bee Bumble bee. Written by Alysia Williams, and Yekaterina Snitkovskaia. Illustrated by, Jinri Kim. Directed by, Catherine Crowley");
     public static final StoryPracticeDataModel wStory8Screen3   = new StoryPracticeDataModel(R.drawable.bumblebee_3,
             "This book is dedicated to the reader, and our mothers, Opal Williams and Tatiana Snitkovskaia, whose love of blossoms inspired this book.");
     public static final StoryPracticeDataModel wStory8Screen4   = new StoryPracticeDataModel(R.drawable.bumblebee_4,
@@ -245,10 +276,14 @@ public class StoryPracticeData {
             "Make your own bumble bee! These crafts can be used as a pointer to help child follow along while reading the story aloud. " +
                     "used to emphasize each /p/ and /b/ sounds. used for visual / kinetic reinforcement");
 
-    public static final StoryPracticeDataModel wStory9Screen1   = new StoryPracticeDataModel(R.drawable.smellyzoo_1,
-            "Practice With Us! Smelly Zoo Written by Wei Vivian Tson, and Jinri Kim. Illustrated by, Jinri Kim. Directed by, Catherine Crowley");
-    public static final StoryPracticeDataModel wStory9Screen2   = new StoryPracticeDataModel(R.drawable.smellyzoo_2,
+    public static final StoryPracticeDataModel wStory9Screen1   = new StoryPracticeDataModel(R.drawable.smellyzoo_2,
+            "S, and Z, Stories");
+    public static final StoryPracticeDataModel wStory9Screen1a   = new StoryPracticeDataModel(R.drawable.smellyzoo_2,
             "Practice with us!, S, and Z, Stories / rhymes to improve speech after surgery to repair a cleft palate. Director, Catherine Crowley, Teachers College, Columbia University");
+    public static final StoryPracticeDataModel wStory9Screen2   = new StoryPracticeDataModel(R.drawable.smellyzoo_1,
+            "Smelly Zoo");
+    public static final StoryPracticeDataModel wStory9Screen2a   = new StoryPracticeDataModel(R.drawable.smellyzoo_1,
+            "Practice With Us! Smelly Zoo Written by Wei Vivian Tson, and Jinri Kim. Illustrated by, Jinri Kim. Directed by, Catherine Crowley");
     public static final StoryPracticeDataModel wStory9Screen3   = new StoryPracticeDataModel(R.drawable.smellyzoo_3,
             "Zoey is in a smelly zoo. Susan is also in a smelly zoo.");
     public static final StoryPracticeDataModel wStory9Screen4   = new StoryPracticeDataModel(R.drawable.smellyzoo_4,

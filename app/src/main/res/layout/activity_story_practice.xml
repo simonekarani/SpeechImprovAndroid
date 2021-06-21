@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toStartOf="@+id/nextImage2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/instrText2" />
+        app:layout_constraintTop_toBottomOf="@+id/separator" />
 
     <Button
         android:id="@+id/nextImage2"
@@ -43,16 +43,16 @@
         android:textColor="@android:color/white"
         android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/wordCopyrightText2"
+        app:layout_constraintBottom_toTopOf="@+id/storyImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/prevImage2"
-        app:layout_constraintTop_toBottomOf="@+id/instrText2" />
+        app:layout_constraintTop_toBottomOf="@+id/separator" />
 
     <ImageButton
         android:id="@+id/recordedBtn2"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
@@ -66,12 +66,12 @@
         app:layout_constraintEnd_toStartOf="@+id/recBtn2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/storyImage" />
+        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText2" />
 
     <ImageButton
         android:id="@+id/recBtn2"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
@@ -85,12 +85,12 @@
         app:layout_constraintEnd_toStartOf="@+id/playBtn2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recordedBtn2"
-        app:layout_constraintTop_toBottomOf="@+id/storyImage" />
+        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText2" />
 
     <ImageButton
         android:id="@+id/playBtn2"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
@@ -104,7 +104,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recBtn2"
-        app:layout_constraintTop_toBottomOf="@+id/storyImage" />
+        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText2" />
 
     <ImageView
         android:id="@+id/storyImage"
@@ -113,12 +113,12 @@
         android:layout_gravity="center"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/recBtn2"
-        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintBottom_toTopOf="@+id/wordCopyrightText2"
+        app:layout_constraintDimensionRatio="H,2:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.455"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wordCopyrightText2" />
+        app:layout_constraintTop_toBottomOf="@+id/prevImage2" />
 
     <Spinner
         android:id="@+id/story_spinner"
@@ -150,20 +150,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/instrText2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:gravity="left"
-        android:text="Repeat the words below the image, and check for correct pronunciation?"
-        android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator" />
-
-    <TextView
         android:id="@+id/wordCopyrightText2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -173,12 +159,13 @@
         android:layout_marginBottom="2dp"
         android:gravity="center"
         android:text="Copyright &#169; LEADERSPROJECT, Columbia University"
-        android:textSize="11dp"
+        android:textSize="5dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/storyImage"
+        app:layout_constraintBottom_toTopOf="@+id/recBtn2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prevImage2" />
+        app:layout_constraintTop_toBottomOf="@+id/storyImage" />
 
     <TextView
         android:id="@+id/recordedText2"

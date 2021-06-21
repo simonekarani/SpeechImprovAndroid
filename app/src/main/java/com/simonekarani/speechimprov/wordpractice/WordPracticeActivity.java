@@ -18,7 +18,9 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.format.DateFormat;
@@ -35,6 +37,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
@@ -115,11 +120,17 @@ public class WordPracticeActivity extends AppCompatActivity
     private SpeechActivityDBHelper mydb ;
     private long activityStartTimeMs = 0;
     private long activityEndTimeMs = 0;
+    private PermissionListener audioPermissionListener;
+    private PermissionRequestErrorListener errorListener;
+    private SpeechRecognizer speechRecognizer;
+    private Intent speechRecognizerIntent;
+    private String keeper = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_practice);
+
         setTitle("Practice Word Pronunciation");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mydb = new SpeechActivityDBHelper(this);
@@ -163,6 +174,67 @@ public class WordPracticeActivity extends AppCompatActivity
         playBtnView.setOnClickListener(myOnClickListener);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
+
+        /*Dexter.withContext(this)
+                .withPermission(Manifest.permission.RECORD_AUDIO)
+                .withListener(audioPermissionListener)
+                .withErrorListener(errorListener)
+                .check();
+        */
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(WordPracticeActivity.this);
+        speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle params) {
+                Toast.makeText(WordPracticeActivity.this, "speech ready", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+                Toast.makeText(WordPracticeActivity.this, "beginning of speech", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onRmsChanged(float rmsdB) {
+
+            }
+
+            @Override
+            public void onBufferReceived(byte[] buffer) {
+                Toast.makeText(WordPracticeActivity.this, "buffer received", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+                Toast.makeText(WordPracticeActivity.this, "end of speech", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(int error) {
+                Toast.makeText(WordPracticeActivity.this, "Error = " + error, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onResults(Bundle results) {
+                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                if (matches != null) {
+                    keeper = matches.get(0);
+                    Toast.makeText(WordPracticeActivity.this, "Result = " + keeper, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+                Toast.makeText(WordPracticeActivity.this, "partial results = ", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onEvent(int eventType, Bundle params) {
+
+            }
+        });
     }
 
     @Override
@@ -283,7 +355,8 @@ public class WordPracticeActivity extends AppCompatActivity
             else if (v.getId() == R.id.recBtn) {
                 if (userSelectedOptIdx == 4) {
                     userSelectedOptIdx = 5;
-                    stopWordRecording();
+                    //stopWordRecording();
+                    speechRecognizer.stopListening();
                     recordBtnView.setImageResource(R.drawable.rec);
                     recText.setText("Record");
                 } else {
@@ -291,7 +364,9 @@ public class WordPracticeActivity extends AppCompatActivity
                     recordBtnView.setImageResource(R.drawable.rec_progress);
                     recText.setText("Recording");
                     if (checkPermissionFromDevice()) {
-                        startWordRecording();
+                        //startWordRecording();
+                        speechRecognizer.startListening(speechRecognizerIntent);
+                        keeper = "";
                     } else {
                         requestPermission();
                     }

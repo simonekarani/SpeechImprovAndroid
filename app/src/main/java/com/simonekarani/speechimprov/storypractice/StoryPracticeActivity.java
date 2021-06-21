@@ -74,7 +74,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private final static int RECOGNIZER_RESULT = 1;
     private final static String KEY_STORY_SCROLLVIEW = "StoryPracticeScroller";
 
-    private final static String STORY_INSTR = "Practice Speech with story book reading. Press Next to view pages of the story book.";
+    private final static String STORY_INSTR = "Practice Speech with story book reading";
             /*"- Press Word Play for correct pronunciation\n" +
             "- Press Mic to record the words\n" +
             "- Press Play to play the recorded word\n" +
@@ -93,7 +93,6 @@ public class StoryPracticeActivity extends AppCompatActivity
     private static ArrayList<MainScreenDataModel> data;
     private View.OnClickListener myOnClickListener;
 
-    private TextView instrTextView = null;
     private Button prevImageView = null;
     private Button nextImageView = null;
     private ImageView storyImageView = null;
@@ -103,7 +102,6 @@ public class StoryPracticeActivity extends AppCompatActivity
     private TextView recordedText = null;
     private TextView recText = null;
     private TextView playText = null;
-    private TextView wordCountText = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
@@ -155,7 +153,6 @@ public class StoryPracticeActivity extends AppCompatActivity
         mySpinner.setOnItemSelectedListener(this);
         mySpinner.setSelection( adapter.getPosition(menuItem) );
 
-        instrTextView = (TextView) findViewById(R.id.instrText2);
         prevImageView = (Button) findViewById(R.id.prevImage2);
         nextImageView = (Button) findViewById(R.id.nextImage2);
         storyImageView = (ImageView) findViewById(R.id.storyImage);
@@ -165,7 +162,6 @@ public class StoryPracticeActivity extends AppCompatActivity
         recordedText = (TextView) findViewById(R.id.recordedText2);
         recText = (TextView) findViewById(R.id.recText2);
         playText = (TextView) findViewById(R.id.playText2);
-        wordCountText = (TextView) findViewById(R.id.wordCountText2);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         prevImageView.setOnClickListener(myOnClickListener);
@@ -177,10 +173,9 @@ public class StoryPracticeActivity extends AppCompatActivity
         prevImageView.setAlpha(0.5f);
 
         wordCountStory = wordCountStoryBook(storyPracticeDataList);
-        wordCountText.setText("# of Words: " + wordCountStory);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-        textToSpeech.setSpeechRate(0.8f);
+        textToSpeech.setSpeechRate(0.3f);
     }
 
     @Override
@@ -202,7 +197,6 @@ public class StoryPracticeActivity extends AppCompatActivity
     }
 
     private void updateStoryImprovView() {
-        instrTextView.setText(STORY_INSTR);
         recordedBtnView.setImageResource(R.drawable.recorded);
         recordBtnView.setImageResource(R.drawable.rec);
         playBtnView.setImageResource(R.drawable.play);
@@ -248,7 +242,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                                 currPracticeData = storyPracticeDataList[currStoryPageIdx];
                                 storyImageView.setImageResource(currPracticeData.id_);
                                 int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_ADD, null, "");
-                                textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
+                                textToSpeech.playSilentUtterance(1700, TextToSpeech.QUEUE_ADD, null);
                             } else {
                                 recordedBtnView.setImageResource(R.drawable.recorded);
                                 recordedText.setText("Listen");
@@ -312,7 +306,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                     recordedText.setText("Reading");
 
                     int speech = textToSpeech.speak(currPracticeData.word, TextToSpeech.QUEUE_FLUSH, null, "");
-                    textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.playSilentUtterance(1700, TextToSpeech.QUEUE_ADD, null);
                 }
             }
             else if (v.getId() == R.id.recBtn2) {
@@ -442,7 +436,6 @@ public class StoryPracticeActivity extends AppCompatActivity
         storyPracticeDataList = Index2GameData.get(pos);
         currStoryPageIdx = 0;
         wordCountStory = wordCountStoryBook(storyPracticeDataList);
-        wordCountText.setText("# of Words: " + wordCountStory);
 
         updatePreferenceSetting(pos);
         updateStoryImprovView();
