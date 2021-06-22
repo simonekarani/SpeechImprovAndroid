@@ -9,10 +9,14 @@
 package com.simonekarani.speechimprov.storypractice;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -24,6 +28,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,6 +78,15 @@ public class StoryPracticeActivity extends AppCompatActivity
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
     private final static String KEY_STORY_SCROLLVIEW = "StoryPracticeScroller";
+
+    private final String SP_PREFS_NAME = "simonekarani.speechimprov.storypractice";
+    private final static String STORYPRACTICE_INSTR =
+            "Follow the steps below:\n\n" +
+            "Step 1:\nPress \"Listen\" button for hearing the words of the story\n\n" +
+            "Step 2:\nPress \"Record\" button to record your voice.\n" +
+                    "Speak the words in blue out loud\n" +
+                    "During, recording press \"Next\" button to view next page of story\n\n" +
+            "Step 3:\nPress \"Play\" button to play your voice\n\n";
 
     private final static String STORY_INSTR = "Practice Speech with story book reading";
             /*"- Press Word Play for correct pronunciation\n" +
@@ -178,6 +192,25 @@ public class StoryPracticeActivity extends AppCompatActivity
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
         textToSpeech.setSpeechRate(0.3f);
+
+        sharedPreferences = getSharedPreferences(SP_PREFS_NAME, 0);
+        if (sharedPreferences.getBoolean("storypractice_first_time", true)) {
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Story Practice Instructions")
+                    .setMessage(STORYPRACTICE_INSTR)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();  /// here you save a boolean value ,
+                        }
+                    })
+                    .setIcon(R.drawable.speechimprov_terms)
+                    .setCancelable(false)
+                    .show();
+
+            sharedPreferences.edit().putBoolean("storypractice_first_time", false).commit();
+        }
     }
 
     @Override
@@ -340,10 +373,15 @@ public class StoryPracticeActivity extends AppCompatActivity
                     stopWordPlay();
                     userSelectedOptIdx = -1;
                 } else if (userSelectedOptIdx == -1) {
-                    userSelectedOptIdx = 6;
-                    playBtnView.setImageResource(R.drawable.pause);
-                    playText.setText("In-Play");
-                    startWordPlay();
+                    if (recWordPath == null) {
+                        createAlertDialog("Story Practice", "No Recorded voice exists ... \n"+
+                                "Press the \"Record\" button and speak the word");
+                    } else {
+                        userSelectedOptIdx = 6;
+                        playBtnView.setImageResource(R.drawable.pause);
+                        playText.setText("In-Play");
+                        startWordPlay();
+                    }
                 }
             }
         }
@@ -351,8 +389,8 @@ public class StoryPracticeActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //super.onCreateOptionsMenu(menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -519,5 +557,26 @@ public class StoryPracticeActivity extends AppCompatActivity
         cal.setTimeInMillis(System.currentTimeMillis());
         String date = DateFormat.format("MM-dd-yyyy", cal).toString();
         return date;
+    }
+
+    private void createAlertDialog(String title, String alertMsg) {
+        TextView titleView = new TextView(this);
+        titleView.setText(title);
+        titleView.setPadding(0, 25, 0, 0);
+        titleView.setGravity(Gravity.CENTER);
+        titleView.setTypeface(null, Typeface.BOLD);
+        titleView.setTextSize(18);
+        titleView.setTextColor(Color.BLACK);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(StoryPracticeActivity.this).create();
+        alertDialog.setCustomTitle(titleView);
+        alertDialog.setMessage(alertMsg);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 }

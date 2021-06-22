@@ -9,9 +9,14 @@
 package com.simonekarani.speechimprov.speechpractice;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -22,6 +27,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +44,7 @@ import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
+import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -63,6 +70,14 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
+
+    private final String SPEECH_PREFS_NAME = "simonekarani.speechimprov.speechpractice";
+    private final static String SPEECHPRACTICE_INSTR =
+            "Follow the steps below:\n\n" +
+                    "Step 1:\nType your speech in the blue box\n\n" +
+                    "Step 2:\nPress \"Listen\" button for hearing your typed speech\n\n" +
+                    "Step 3:\nPress \"Record\" button to record your speech.\n\n" +
+                    "Step 4:\nPress \"Play\" button to play your recorded speech\n\n";
 
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -135,6 +150,25 @@ public class SpeechPracticeActivity extends AppCompatActivity
         }
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SPEECH_PREFS_NAME, 0);
+        if (sharedPreferences.getBoolean("speechpractice_first_time", true)) {
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Story Practice Instructions")
+                    .setMessage(SPEECHPRACTICE_INSTR)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();  /// here you save a boolean value ,
+                        }
+                    })
+                    .setIcon(R.drawable.speechimprov_terms)
+                    .setCancelable(false)
+                    .show();
+
+            sharedPreferences.edit().putBoolean("speechpractice_first_time", false).commit();
+        }
     }
 
     @Override
@@ -251,10 +285,15 @@ public class SpeechPracticeActivity extends AppCompatActivity
                     stopWordPlay();
                     userSelectedOptIdx = -1;
                 } else {
-                    userSelectedOptIdx = 6;
-                    playBtnView.setImageResource(R.drawable.pause);
-                    playText.setText("In-Play");
-                    startWordPlay();
+                    if (recWordPath == null) {
+                        createAlertDialog("Speech Practice", "No Recorded voice exists ... \n"+
+                                "Press the \"Record\" button and speak the word");
+                    } else {
+                        userSelectedOptIdx = 6;
+                        playBtnView.setImageResource(R.drawable.pause);
+                        playText.setText("In-Play");
+                        startWordPlay();
+                    }
                 }
             }
             else if (v.getId() == R.id.clearButton) {
@@ -265,8 +304,8 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //super.onCreateOptionsMenu(menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -480,5 +519,26 @@ public class SpeechPracticeActivity extends AppCompatActivity
         cal.setTimeInMillis(System.currentTimeMillis());
         String date = DateFormat.format("MM-dd-yyyy", cal).toString();
         return date;
+    }
+
+    private void createAlertDialog(String title, String alertMsg) {
+        TextView titleView = new TextView(this);
+        titleView.setText(title);
+        titleView.setPadding(0, 25, 0, 0);
+        titleView.setGravity(Gravity.CENTER);
+        titleView.setTypeface(null, Typeface.BOLD);
+        titleView.setTextSize(18);
+        titleView.setTextColor(Color.BLACK);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(SpeechPracticeActivity.this).create();
+        alertDialog.setCustomTitle(titleView);
+        alertDialog.setMessage(alertMsg);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 }

@@ -1,5 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+    tools:context=".wordpractice.WordPracticeActivity">
+
+    <item android:id="@+id/enable_play"
+        android:title="Enable Play"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/enable_transcribe"
+        android:title="Enable Transcription"
+        app:showAsAction="never" />
+
 </menu>

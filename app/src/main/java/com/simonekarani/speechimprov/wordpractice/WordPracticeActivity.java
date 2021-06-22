@@ -8,11 +8,15 @@
 
 package com.simonekarani.speechimprov.wordpractice;
 
+import android.app.AlertDialog;
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +51,7 @@ import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -70,6 +76,15 @@ public class WordPracticeActivity extends AppCompatActivity
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
+
+    private final String WP_PREFS_NAME = "simonekarani.speechimprov.wordpractice";
+    private final static String WORDPRACTICE_INSTR =
+            "Follow the steps below:\n" +
+            "Step 1:\nPress \"Listen\" button\n\n" +
+            "Step 2:\nPress \"Record\" button to record your word\n" +
+            "Speak the word in blue out loud\n\n"+
+            "Step 3:\nResult appears in \"What we Heard\" or \"Play\" button\n\n" +
+            "Note: \"What we Heard\" or \"Play\" can be enabled via menu option\n";
 
     private final static String WORD_INSTR = "Repeat the words below the image, and check for correct pronunciation?\n";
             /*"- Press Word Play for correct pronunciation\n" +
@@ -233,6 +248,25 @@ public class WordPracticeActivity extends AppCompatActivity
 
             }
         });
+
+        sharedPreferences = getSharedPreferences(WP_PREFS_NAME, 0);
+        if (sharedPreferences.getBoolean("wordpractice_first_time", true)) {
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Word Practice Instructions")
+                    .setMessage(WORDPRACTICE_INSTR)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();  /// here you save a boolean value ,
+                        }
+                    })
+                    .setIcon(R.drawable.speechimprov_terms)
+                    .setCancelable(false)
+                    .show();
+
+            sharedPreferences.edit().putBoolean("wordpractice_first_time", false).commit();
+        }
     }
 
     @Override
@@ -379,10 +413,15 @@ public class WordPracticeActivity extends AppCompatActivity
                     stopWordPlay();
                     userSelectedOptIdx = -1;
                 } else {
-                    userSelectedOptIdx = 6;
-                    playBtnView.setImageResource(R.drawable.pause);
-                    playText.setText("In-Play");
-                    startWordPlay();
+                    if (recWordPath == null) {
+                        createAlertDialog("Word Practice", "No Recorded voice exists ... \n"+
+                                "Press the \"Record\" button and speak the word");
+                    } else {
+                        userSelectedOptIdx = 6;
+                        playBtnView.setImageResource(R.drawable.pause);
+                        playText.setText("In-Play");
+                        startWordPlay();
+                    }
                 }
             }
         }
@@ -556,5 +595,26 @@ public class WordPracticeActivity extends AppCompatActivity
         cal.setTimeInMillis(System.currentTimeMillis());
         String date = DateFormat.format("MM-dd-yyyy", cal).toString();
         return date;
+    }
+
+    private void createAlertDialog(String title, String alertMsg) {
+        TextView titleView = new TextView(this);
+        titleView.setText(title);
+        titleView.setPadding(0, 25, 0, 0);
+        titleView.setGravity(Gravity.CENTER);
+        titleView.setTypeface(null, Typeface.BOLD);
+        titleView.setTextSize(18);
+        titleView.setTextColor(Color.BLACK);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(WordPracticeActivity.this).create();
+        alertDialog.setCustomTitle(titleView);
+        alertDialog.setMessage(alertMsg);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 }
