@@ -72,6 +72,7 @@ public class WordPracticeActivity extends AppCompatActivity
 
     private final static String KEY_WORD_SCROLLVIEW = "WordPracticeScroller";
     private final static String KEY_WORD_LISTVIEW = "WordPracticeList";
+    private final static String KEY_MENU_WORDPLAY = "MenuWordPractice";
 
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
@@ -138,6 +139,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private SpeechRecognizer speechRecognizer;
     private Intent speechRecognizerIntent;
     private String keeper = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -389,8 +391,11 @@ public class WordPracticeActivity extends AppCompatActivity
             else if (v.getId() == R.id.recBtn) {
                 if (userSelectedOptIdx == 4) {
                     userSelectedOptIdx = 5;
-                    //stopWordRecording();
-                    speechRecognizer.stopListening();
+                    if (isEnableVoicePlayback()) {
+                        stopWordRecording();
+                    } else {
+                        speechRecognizer.stopListening();
+                    }
                     recordBtnView.setImageResource(R.drawable.rec);
                     recText.setText("Record");
                 } else {
@@ -398,16 +403,23 @@ public class WordPracticeActivity extends AppCompatActivity
                     recordBtnView.setImageResource(R.drawable.rec_progress);
                     recText.setText("Recording");
                     if (checkPermissionFromDevice()) {
-                        //startWordRecording();
-                        speechRecognizer.startListening(speechRecognizerIntent);
-                        keeper = "";
+                        if (isEnableVoicePlayback()) {
+                            startWordRecording();
+                        } else {
+                            speechRecognizer.startListening(speechRecognizerIntent);
+                            keeper = "";
+                        }
                     } else {
                         requestPermission();
                     }
                 }
             }
             else if (v.getId() == R.id.playBtn){
-                if (userSelectedOptIdx == 6) {
+                if (!isEnableVoicePlayback()) {
+                    createAlertDialog("Word Practice", "Voice Playback disabled ... \n"+
+                            "Select the Menu \"Enable 'Play' Voice\"");
+                }
+                else if (userSelectedOptIdx == 6) {
                     playBtnView.setImageResource(R.drawable.play);
                     playText.setText("Play");
                     stopWordPlay();
@@ -428,6 +440,13 @@ public class WordPracticeActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.enable_item);
+        item.setTitle( getWordPreferenceMenuItem() );
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -443,6 +462,14 @@ public class WordPracticeActivity extends AppCompatActivity
                 startActivity(intent);
                 finish();
                 return true;
+            case R.id.enable_item:
+                String mItem = (String) item.getTitle();
+                if (mItem.equals("Enable 'Play' Voice")) {
+                    updateWordPreferenceMenuItem("Enable 'What we Heard'");
+                } else {
+                    updateWordPreferenceMenuItem("Enable 'Play' Voice");
+                }
+                break;
             default:
                 break;
         }
@@ -553,6 +580,10 @@ public class WordPracticeActivity extends AppCompatActivity
         }
     }
 
+    public boolean isEnableVoicePlayback() {
+        return !getWordPreferenceMenuItem().equals("Enable 'Play' Voice");
+    }
+
     private void updateWordReportLog() {
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
@@ -573,6 +604,21 @@ public class WordPracticeActivity extends AppCompatActivity
         SharedPreferences.Editor edit = sharedPreferences.edit();
 
         edit.putInt(KEY_WORD_LISTVIEW, selectedIdx);
+        edit.commit();
+    }
+
+    public String getWordPreferenceMenuItem() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String menuItem = sharedPreferences.getString(KEY_MENU_WORDPLAY, "Enable 'Play' Voice");
+
+        return menuItem;
+    }
+
+    public void updateWordPreferenceMenuItem(String mItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+
+        edit.putString(KEY_MENU_WORDPLAY, mItem);
         edit.commit();
     }
 

@@ -3,12 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".wordpractice.WordPracticeActivity">
 
-    <item android:id="@+id/enable_play"
+    <item android:id="@+id/enable_item"
         android:title="Enable Play"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/enable_transcribe"
-        android:title="Enable Transcription"
         app:showAsAction="never" />
 
 </menu>
