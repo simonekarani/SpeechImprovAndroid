@@ -532,6 +532,10 @@ public class StoryPracticeActivity extends AppCompatActivity
     }
 
     private void updateStoryReportLog() {
+        if (userSelectedOptIdx == 2) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
         userSelectedOptIdx = 100;
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
