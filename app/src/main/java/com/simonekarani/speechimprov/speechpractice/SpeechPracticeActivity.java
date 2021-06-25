@@ -150,6 +150,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         }
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
+        textToSpeech.setSpeechRate(0.3f);
 
         SharedPreferences sharedPreferences = getSharedPreferences(SPEECH_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("speechpractice_first_time", true)) {
@@ -262,7 +263,9 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 int speech = textToSpeech.speak(speechTextView.getText(), TextToSpeech.QUEUE_FLUSH, null, "");
             }
             else if (v.getId() == R.id.recBtn3) {
-                if (userSelectedOptIdx == 4) {
+                if (userSelectedOptIdx == 2) {
+                    createAlertDialog("Speech Practice", "\"Record\" button DISABLED during story listening");
+                } else if (userSelectedOptIdx == 4) {
                     userSelectedOptIdx = 5;
                     stopStoryRecording();
                     recordBtnView.setImageResource(R.drawable.rec);
@@ -279,7 +282,9 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 }
             }
             else if (v.getId() == R.id.playBtn3){
-                if (userSelectedOptIdx == 6) {
+                if (userSelectedOptIdx == 2) {
+                    createAlertDialog("Speech Practice", "\"Play\" button DISABLED during story listening");
+                } else if (userSelectedOptIdx == 6) {
                     playBtnView.setImageResource(R.drawable.play);
                     playText.setText("Play");
                     stopWordPlay();
@@ -437,6 +442,10 @@ public class SpeechPracticeActivity extends AppCompatActivity
     }
 
     private void updateSpeechReportLog() {
+        if (userSelectedOptIdx == 2) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
         mydb.updateSpeechActivity(getCurrDate(), "Speech", durationMs);

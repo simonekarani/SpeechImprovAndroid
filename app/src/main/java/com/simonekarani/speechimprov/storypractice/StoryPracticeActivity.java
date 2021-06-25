@@ -261,11 +261,13 @@ public class StoryPracticeActivity extends AppCompatActivity
                 @Override
                 public void onDone(String utteranceId) {
                     Log.i("TextToSpeech","On Done");
-                    userSelectedOptIdx = -1;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (currStoryPageIdx < storyPracticeDataList.length-1) {
+                            if (userSelectedOptIdx == 100) {
+                                // do nothing back key pressed
+                            } else if (currStoryPageIdx < storyPracticeDataList.length-1) {
+                                userSelectedOptIdx = 2;
                                 currStoryPageIdx++;
                                 prevImageView.setAlpha(1.0f);
                                 if (currStoryPageIdx == storyPracticeDataList.length-1) {
@@ -290,6 +292,7 @@ public class StoryPracticeActivity extends AppCompatActivity
                                 currPracticeData = storyPracticeDataList[currStoryPageIdx];
                                 storyImageView.setImageResource(currPracticeData.id_);
                                 readText.setText(currPracticeData.word);
+                                userSelectedOptIdx = -1;
                             }
                         }
                     });
@@ -314,29 +317,38 @@ public class StoryPracticeActivity extends AppCompatActivity
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.prevImage2) {
-                if (currStoryPageIdx > 0) {
-                    currStoryPageIdx--;
-                    currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
-                    currPracticeData = storyPracticeDataList[currStoryPageIdx];
-                    storyImageView.setImageResource(currPracticeData.id_);
-                    readText.setText(currPracticeData.word);
-                    nextImageView.setAlpha(1.0f);
+                if (userSelectedOptIdx == 2) {
+                    createAlertDialog("Story Practice", "\"Prev\" button DISABLED during story listening");
                 }
-                if (currStoryPageIdx == 0) {
-                    prevImageView.setAlpha(0.5f);
+                else {
+                    if (currStoryPageIdx > 0) {
+                        currStoryPageIdx--;
+                        currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
+                        currPracticeData = storyPracticeDataList[currStoryPageIdx];
+                        storyImageView.setImageResource(currPracticeData.id_);
+                        readText.setText(currPracticeData.word);
+                        nextImageView.setAlpha(1.0f);
+                    }
+                    if (currStoryPageIdx == 0) {
+                        prevImageView.setAlpha(0.5f);
+                    }
                 }
             }
             else if (v.getId() == R.id.nextImage2) {
-                if (currStoryPageIdx < storyPracticeDataList.length-1) {
-                    currStoryPageIdx++;
-                    currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
-                    currPracticeData = storyPracticeDataList[currStoryPageIdx];
-                    storyImageView.setImageResource(currPracticeData.id_);
-                    readText.setText(currPracticeData.word);
-                    prevImageView.setAlpha(1.0f);
-                }
-                if (currStoryPageIdx == storyPracticeDataList.length-1) {
-                    nextImageView.setAlpha(0.5f);
+                if (userSelectedOptIdx == 2) {
+                    createAlertDialog("Story Practice", "\"Next\" button DISABLED during story listening");
+                } else {
+                    if (currStoryPageIdx < storyPracticeDataList.length - 1) {
+                        currStoryPageIdx++;
+                        currStoryPageIdx = currStoryPageIdx % storyPracticeDataList.length;
+                        currPracticeData = storyPracticeDataList[currStoryPageIdx];
+                        storyImageView.setImageResource(currPracticeData.id_);
+                        readText.setText(currPracticeData.word);
+                        prevImageView.setAlpha(1.0f);
+                    }
+                    if (currStoryPageIdx == storyPracticeDataList.length - 1) {
+                        nextImageView.setAlpha(0.5f);
+                    }
                 }
             }
             else if (v.getId() == R.id.recordedBtn2) {
@@ -350,7 +362,9 @@ public class StoryPracticeActivity extends AppCompatActivity
                 }
             }
             else if (v.getId() == R.id.recBtn2) {
-                if (userSelectedOptIdx == 4) {
+                if (userSelectedOptIdx == 2) {
+                    createAlertDialog("Story Practice", "\"Record\" button DISABLED during story listening");
+                } else if (userSelectedOptIdx == 4) {
                     userSelectedOptIdx = 5;
                     stopStoryRecording();
                     recordBtnView.setImageResource(R.drawable.rec);
@@ -367,7 +381,9 @@ public class StoryPracticeActivity extends AppCompatActivity
                 }
             }
             else if (v.getId() == R.id.playBtn2){
-                if (userSelectedOptIdx == 6) {
+                if (userSelectedOptIdx == 2) {
+                    createAlertDialog("Story Practice", "\"Play\" button DISABLED during story listening");
+                } else if (userSelectedOptIdx == 6) {
                     playBtnView.setImageResource(R.drawable.play);
                     playText.setText("Play");
                     stopWordPlay();
@@ -516,6 +532,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     }
 
     private void updateStoryReportLog() {
+        userSelectedOptIdx = 100;
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
         mydb.updateSpeechActivity(getCurrDate(), "Story", durationMs);
