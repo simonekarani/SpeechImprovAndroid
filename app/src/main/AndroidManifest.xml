@@ -3,27 +3,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.simonekarani.speechimprov">
 
+    <compatible-screens>
+        <screen android:screenSize="small" android:screenDensity="ldpi" />
+        <screen android:screenSize="small" android:screenDensity="mdpi" />
+        <screen android:screenSize="small" android:screenDensity="hdpi" />
+        <screen android:screenSize="small" android:screenDensity="xhdpi" />
+        <screen android:screenSize="small" android:screenDensity="420" />
+        <screen android:screenSize="small" android:screenDensity="480" />
+        <screen android:screenSize="small" android:screenDensity="560" />
+        <screen android:screenSize="small" android:screenDensity="640" />
+        <screen android:screenSize="normal" android:screenDensity="ldpi" />
+        <screen android:screenSize="normal" android:screenDensity="mdpi" />
+        <screen android:screenSize="normal" android:screenDensity="hdpi" />
+        <screen android:screenSize="normal" android:screenDensity="xhdpi" />
+        <screen android:screenSize="normal" android:screenDensity="420" />
+        <screen android:screenSize="normal" android:screenDensity="480" />
+        <screen android:screenSize="normal" android:screenDensity="560" />
+        <screen android:screenSize="normal" android:screenDensity="640" />
+        <screen android:screenSize="large" android:screenDensity="ldpi" />
+        <screen android:screenSize="large" android:screenDensity="mdpi" />
+        <screen android:screenSize="large" android:screenDensity="hdpi" />
+        <screen android:screenSize="large" android:screenDensity="xhdpi" />
+        <screen android:screenSize="large" android:screenDensity="420" />
+        <screen android:screenSize="large" android:screenDensity="480" />
+        <screen android:screenSize="large" android:screenDensity="560" />
+        <screen android:screenSize="large" android:screenDensity="640" />
+    </compatible-screens>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeechImprov">
 
         <activity
             android:name=".wordpractice.WordPracticeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_word_practice" />
         <activity
             android:name=".storypractice.StoryPracticeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_story_practice" />
         <activity
             android:name=".speechpractice.SpeechPracticeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_speech_practice" />
         <activity
             android:name=".report.SpeechImprovReportActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_speech_practice" />
         <activity android:name=".MainActivity">
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

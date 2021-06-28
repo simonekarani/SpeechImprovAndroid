@@ -42,8 +42,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
@@ -77,6 +75,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private static final int MAX_WORD_PRACTICE_COUNT = 7;
     final int REQUEST_PERMISSION_CODE = 1000;
     private final static int RECOGNIZER_RESULT = 1;
+    private final static int SPEECH_RECOGNIZER_RESULT = 10;
 
     private final String WP_PREFS_NAME = "simonekarani.speechimprov.wordpractice";
     private final static String WORDPRACTICE_INSTR =
@@ -116,6 +115,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private TextView recordedText = null;
     private TextView recText = null;
     private TextView playText = null;
+    private TextView repeatText = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
@@ -134,8 +134,6 @@ public class WordPracticeActivity extends AppCompatActivity
     private SpeechActivityDBHelper mydb ;
     private long activityStartTimeMs = 0;
     private long activityEndTimeMs = 0;
-    private PermissionListener audioPermissionListener;
-    private PermissionRequestErrorListener errorListener;
     private SpeechRecognizer speechRecognizer;
     private Intent speechRecognizerIntent;
     private String keeper = "";
@@ -180,6 +178,7 @@ public class WordPracticeActivity extends AppCompatActivity
         recordedText = (TextView) findViewById(R.id.recordedText);
         recText = (TextView) findViewById(R.id.recText);
         playText = (TextView) findViewById(R.id.playText);
+        repeatText = (TextView) findViewById(R.id.repeatText);
 
         myOnClickListener = (View.OnClickListener) new MyOnClickListener(this);
         prevImageView.setOnClickListener(myOnClickListener);
@@ -189,67 +188,6 @@ public class WordPracticeActivity extends AppCompatActivity
         playBtnView.setOnClickListener(myOnClickListener);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-
-        /*Dexter.withContext(this)
-                .withPermission(Manifest.permission.RECORD_AUDIO)
-                .withListener(audioPermissionListener)
-                .withErrorListener(errorListener)
-                .check();
-        */
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(WordPracticeActivity.this);
-        speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        speechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle params) {
-                Toast.makeText(WordPracticeActivity.this, "speech ready", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-                Toast.makeText(WordPracticeActivity.this, "beginning of speech", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onRmsChanged(float rmsdB) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] buffer) {
-                Toast.makeText(WordPracticeActivity.this, "buffer received", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-                Toast.makeText(WordPracticeActivity.this, "end of speech", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onError(int error) {
-                Toast.makeText(WordPracticeActivity.this, "Error = " + error, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onResults(Bundle results) {
-                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                if (matches != null) {
-                    keeper = matches.get(0);
-                    Toast.makeText(WordPracticeActivity.this, "Result = " + keeper, Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onPartialResults(Bundle partialResults) {
-                Toast.makeText(WordPracticeActivity.this, "partial results = ", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onEvent(int eventType, Bundle params) {
-
-            }
-        });
 
         sharedPreferences = getSharedPreferences(WP_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("wordpractice_first_time", true)) {
@@ -406,8 +344,7 @@ public class WordPracticeActivity extends AppCompatActivity
                         if (isEnableVoicePlayback()) {
                             startWordRecording();
                         } else {
-                            speechRecognizer.startListening(speechRecognizerIntent);
-                            keeper = "";
+                            startSpeechRecognition();
                         }
                     } else {
                         requestPermission();
@@ -474,6 +411,18 @@ public class WordPracticeActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void startSpeechRecognition() {
+        Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        if (speechIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(speechIntent, SPEECH_RECOGNIZER_RESULT);
+        } else {
+            Toast.makeText(this, "Device does not support speech input", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void startWordRecording() {
@@ -558,9 +507,23 @@ public class WordPracticeActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RECOGNIZER_RESULT && resultCode == RESULT_OK) {
-            speechResultList = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            Log.i("WordPracticeActivity", speechResultList.get(0).toString());
+        switch (requestCode) {
+            case SPEECH_RECOGNIZER_RESULT:
+                if (resultCode == RESULT_OK && data != null) {
+                    ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    String resultWord = results.get(0);
+                    for (int i = 0; i < results.size(); i++) {
+                        if (results.get(i).equals(currPracticeData.word)) {
+                            resultWord = results.get(i);
+                            Log.i("WordActivity", "" + i + " = " + results.get(i));
+                        }
+                    }
+                    repeatText.setText(resultWord);
+                    recordBtnView.setImageResource(R.drawable.rec);
+                    recText.setText("Record");
+                    userSelectedOptIdx = -1;
+                }
+                break;
         }
     }
 
