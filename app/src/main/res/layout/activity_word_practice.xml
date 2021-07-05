@@ -154,7 +154,7 @@
         android:text="ReadText"
         android:textAlignment="center"
         android:textColor="#216EF3"
-        android:textSize="25dp"
+        android:textSize="32dp"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toTopOf="@+id/wordImage"
         app:layout_constraintEnd_toEndOf="parent"

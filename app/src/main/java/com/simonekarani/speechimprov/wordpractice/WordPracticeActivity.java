@@ -21,6 +21,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -124,7 +125,6 @@ public class WordPracticeActivity extends AppCompatActivity
     private WordPracticeDataModel wordPracticeDataList[];
     private Set<Integer> wordPracticeDataSet = new HashSet<>();
     private ArrayList<String> speechResultList = new ArrayList<>();
-    private ArrayList<Integer> wordPracticeDataArray = new ArrayList<>();
     private int userResultCount = 0;
     private int currWordSetDataIdx = 0;
     private int currWordPracticeDataIdx = 0;
@@ -151,7 +151,6 @@ public class WordPracticeActivity extends AppCompatActivity
         currWordSetDataIdx = 0;
         currWordPracticeDataIdx = 0;
         userResultCount = 0;
-        wordPracticeDataArray.add(currWordPracticeDataIdx);
 
         for (int i = 0; i < WordPracticeData.WordPracticeList.length; i++) {
             Index2GameData.put(i, WordPracticeData.WordPracticeList[i]);
@@ -188,6 +187,7 @@ public class WordPracticeActivity extends AppCompatActivity
         playBtnView.setOnClickListener(myOnClickListener);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
+        textToSpeech.setSpeechRate(0.3f);
 
         sharedPreferences = getSharedPreferences(WP_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("wordpractice_first_time", true)) {
@@ -233,13 +233,13 @@ public class WordPracticeActivity extends AppCompatActivity
         playBtnView.setImageResource(R.drawable.play);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int wordIdx = sharedPreferences.getInt(KEY_WORD_LISTVIEW, 0);
-        currPracticeData = wordPracticeDataList[wordIdx];
+        currWordPracticeDataIdx = sharedPreferences.getInt(KEY_WORD_LISTVIEW, 0);
+        currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
         wordImageView.setImageResource(currPracticeData.id_);
         readWordView.setText(currPracticeData.word);
         activityStartTimeMs = System.currentTimeMillis();
 
-        if (wordIdx == 0) {
+        if (currWordPracticeDataIdx == 0) {
             prevImageView.setAlpha(0.5f);
         }
     }
@@ -303,18 +303,7 @@ public class WordPracticeActivity extends AppCompatActivity
                 updatePreferenceWordListSetting(currWordPracticeDataIdx);
             }
             else if (v.getId() == R.id.nextImage) {
-                if (currWordPracticeDataIdx < wordPracticeDataList.length-1) {
-                    currWordPracticeDataIdx++;
-                    currWordPracticeDataIdx = currWordPracticeDataIdx % wordPracticeDataList.length;
-                    currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
-                    wordImageView.setImageResource(currPracticeData.id_);
-                    readWordView.setText(currPracticeData.word);
-                    prevImageView.setAlpha(1.0f);
-                }
-                if (currWordPracticeDataIdx == wordPracticeDataList.length-1) {
-                    nextImageView.setAlpha(0.5f);
-                }
-                updatePreferenceWordListSetting(currWordPracticeDataIdx);
+                nextPracticeWord();
             }
             else if (v.getId() == R.id.recordedBtn) {
                 if (userSelectedOptIdx == -1) {
@@ -512,13 +501,20 @@ public class WordPracticeActivity extends AppCompatActivity
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String resultWord = results.get(0);
+                    boolean matched = false;
                     for (int i = 0; i < results.size(); i++) {
-                        if (results.get(i).equals(currPracticeData.word)) {
+                        if (results.get(i).equalsIgnoreCase(currPracticeData.word)) {
                             resultWord = results.get(i);
+                            matched = true;
                             Log.i("WordActivity", "" + i + " = " + results.get(i));
+                            repeatText.setText(resultWord);
+                            createCongratulationsAlert("Matched " + currPracticeData.word + " pronunciation");
+                            nextPracticeWord();
                         }
                     }
-                    repeatText.setText(resultWord);
+                    if (!matched) {
+                        repeatText.setText(resultWord);
+                    }
                     recordBtnView.setImageResource(R.drawable.rec);
                     recText.setText("Record");
                     userSelectedOptIdx = -1;
@@ -541,6 +537,22 @@ public class WordPracticeActivity extends AppCompatActivity
             }
             break;
         }
+    }
+
+    private void nextPracticeWord() {
+        if (currWordPracticeDataIdx < wordPracticeDataList.length-1) {
+            currWordPracticeDataIdx++;
+            currWordPracticeDataIdx = currWordPracticeDataIdx % wordPracticeDataList.length;
+            currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
+            wordImageView.setImageResource(currPracticeData.id_);
+            readWordView.setText(currPracticeData.word);
+            prevImageView.setAlpha(1.0f);
+        }
+        if (currWordPracticeDataIdx == wordPracticeDataList.length-1) {
+            nextImageView.setAlpha(0.5f);
+        }
+        updatePreferenceWordListSetting(currWordPracticeDataIdx);
+        repeatText.setText("");
     }
 
     public boolean isEnableVoicePlayback() {
@@ -625,5 +637,38 @@ public class WordPracticeActivity extends AppCompatActivity
                     }
                 });
         alertDialog.show();
+    }
+
+    private void createCongratulationsAlert(String msg) {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle("Congratulations!!").
+                setMessage(msg);
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //exitLauncher();
+            }
+        });
+        final AlertDialog alert = dialog.create();
+        alert.show();
+
+        // Hide after some seconds
+        final Handler handler  = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (alert.isShowing()) {
+                    alert.dismiss();
+                }
+            }
+        };
+
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                handler.removeCallbacks(runnable);
+            }
+        });
+
+        handler.postDelayed(runnable, 2000);
     }
 }

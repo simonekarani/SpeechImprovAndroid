@@ -371,13 +371,13 @@ public class StoryPracticeActivity extends AppCompatActivity
                     recText.setText("Record");
                 } else if (userSelectedOptIdx == -1) {
                     userSelectedOptIdx = 4;
+                    if (!checkPermissionFromDevice()) {
+                        requestPermission();
+                        try { Thread.sleep(1000); } catch (Exception e) {}
+                    }
                     recordBtnView.setImageResource(R.drawable.rec_progress);
                     recText.setText("Recording");
-                    if (checkPermissionFromDevice()) {
-                        startWordRecording();
-                    } else {
-                        requestPermission();
-                    }
+                    startWordRecording();
                 }
             }
             else if (v.getId() == R.id.playBtn2){

@@ -25,6 +25,8 @@ import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
@@ -135,6 +137,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         playBtnView.setOnClickListener(myOnClickListener);
         clearButtonView.setOnClickListener(myOnClickListener);
 
+        String speechText = readFromFile(getApplicationContext());
         speechTextView = (TextView) findViewById(R.id.speechText);
         speechTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -144,11 +147,28 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 }
             }
         });
-        String speechText = readFromFile(getApplicationContext());
+        speechTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String currentText = editable.toString();
+                wordCountSpeech = countWordString(currentText);
+                String wordCountStr = "# of Words: " + wordCountSpeech;
+                wordCountText.setText(wordCountStr);
+            }
+        });
         if (!speechText.equals("")) {
             speechTextView.setText(speechText);
         }
-
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
         textToSpeech.setSpeechRate(0.3f);
 
@@ -197,6 +217,8 @@ public class SpeechPracticeActivity extends AppCompatActivity
         if (getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } else {
+            Log.i("SpeechPracticeActivity", "Clicked away from edit text");
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -462,10 +484,6 @@ public class SpeechPracticeActivity extends AppCompatActivity
         writeToFile(speechTextView.getText().toString(), getApplicationContext());
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(SpeechPracticeActivity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-        wordCountSpeech = countWordString(speechTextView.getText().toString());
-        String wordCountStr = "# of Words: " + wordCountSpeech;
-        wordCountText.setText(wordCountStr);
     }
 
     private void writeToFile(String data, Context context) {

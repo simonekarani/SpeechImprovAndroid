@@ -1,15 +1,19 @@
 package com.simonekarani.speechimprov;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -31,6 +35,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements MainScreenDataAdapter.OnMoralTopicListener {
 
     private static final String TAG = "MainActivity";
+    final int REQUEST_PERMISSION_CODE = 1000;
 
     private final String APP_PREFS_NAME = "simonekarani.SpeechImprov";
     private final static String SPEECHIMPROV_TERMS = "The SpeechImprov application is built for speech improvement.\n\n" +
@@ -102,6 +107,23 @@ public class MainActivity extends AppCompatActivity implements MainScreenDataAda
 
         adapter = new MainScreenDataAdapter(data, this);
         recyclerView.setAdapter(adapter);
+        if (!checkPermissionFromDevice()) {
+            requestPermission();
+        }
+    }
+
+    private boolean checkPermissionFromDevice() {
+        int write_external_storage_result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int record_audio_results = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        return write_external_storage_result == PackageManager.PERMISSION_GRANTED &&
+                record_audio_results == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO
+        }, REQUEST_PERMISSION_CODE);
     }
 
     private static class MyOnClickListener implements View.OnClickListener {

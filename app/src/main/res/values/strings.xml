@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SpeechImprov</string>
+    <string name="app_name">Speech Improv</string>
     <string name="title_activity_speech_practice">SpeechPracticeActivity</string>
     <!--
     This string is used for square devices and overridden by hello_world in
