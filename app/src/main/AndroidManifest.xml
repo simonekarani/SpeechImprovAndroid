@@ -35,7 +35,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SpeechImprov">
+        android:theme="@style/Theme.SpeechImprov"
+        android:requestLegacyExternalStorage="true">
 
         <activity
             android:name=".wordpractice.WordPracticeActivity"
@@ -57,6 +58,11 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_speech_practice" />
+        <activity
+            android:name=".speechpractice.SpeechVoiceMemosActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:label="@string/title_activity_speech_practice" />
         <activity android:name=".MainActivity">
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
@@ -74,6 +80,7 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

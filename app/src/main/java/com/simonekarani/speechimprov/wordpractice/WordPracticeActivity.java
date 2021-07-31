@@ -562,7 +562,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private void updateWordReportLog() {
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
-        mydb.updateSpeechActivity(getCurrDate(), "Word", durationMs);
+        mydb.updateSpeechActivity(getCurrDate(), "Word", durationMs, recWordPath);
     }
 
     private void updatePreferenceSetting(int selectedIdx) {
@@ -614,7 +614,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private String getCurrDate() {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(System.currentTimeMillis());
-        String date = DateFormat.format("MM-dd-yyyy", cal).toString();
+        String date = DateFormat.format("MM-dd-yyyy HH:MM", cal).toString();
         return date;
     }
 

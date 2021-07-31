@@ -405,9 +405,16 @@ public class StoryPracticeActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //super.onCreateOptionsMenu(menu);
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_story, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //MenuItem item = menu.findItem(R.id.enable_item);
+        //item.setTitle( getWordPreferenceMenuItem() );
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -420,6 +427,12 @@ public class StoryPracticeActivity extends AppCompatActivity
                 startActivity(intent);
                 finish();
                 return true;
+            case R.id.story_memos_item:
+                String vItem = (String) item.getTitle();
+                break;
+            case R.id.story_access_item:
+                String aItem = (String) item.getTitle();
+                break;
             default:
                 break;
         }
@@ -539,7 +552,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         userSelectedOptIdx = 100;
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
-        mydb.updateSpeechActivity(getCurrDate(), "Story", durationMs);
+        mydb.updateSpeechActivity(getCurrDate(), "Story", durationMs, recWordPath);
     }
 
     private void updatePreferenceSetting(int selectedIdx) {
@@ -576,7 +589,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private String getCurrDate() {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(System.currentTimeMillis());
-        String date = DateFormat.format("MM-dd-yyyy", cal).toString();
+        String date = DateFormat.format("MM-dd-yyyy HH:MM", cal).toString();
         return date;
     }
 

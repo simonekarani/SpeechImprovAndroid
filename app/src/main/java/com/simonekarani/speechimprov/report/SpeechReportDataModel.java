@@ -5,15 +5,19 @@ public class SpeechReportDataModel {
     String reportTitle;
     String activity;
     String durationStr;
+    String pathStr;
 
-    public SpeechReportDataModel(int id, String title, String activityList, String durationStr) {
+    public SpeechReportDataModel(int id, String title, String activityList, String durationStr,
+                                 String pathStr) {
         this.id = id;
         this.reportTitle = title;
         this.activity = activityList;
         this.durationStr = durationStr;
+        this.pathStr = pathStr;
     }
 
-    public SpeechReportDataModel(String title, String activityList, String durationStr) {
+    public SpeechReportDataModel(String title, String activityList, String durationStr,
+                                 String pathStr) {
         this.reportTitle = title;
         this.activity = "Activity: " + activityList;
         Long durationValueSecs = Long.parseLong(durationStr) / 1000;
@@ -49,4 +53,6 @@ public class SpeechReportDataModel {
     public String getDuration() {
         return durationStr;
     }
+
+    public String getSpeechPath() { return pathStr; }
 }

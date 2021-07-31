@@ -46,6 +46,7 @@ import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
+import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
 
 import java.io.BufferedReader;
@@ -331,9 +332,16 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //super.onCreateOptionsMenu(menu);
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_speech, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //MenuItem item = menu.findItem(R.id.enable_item);
+        //item.setTitle( getWordPreferenceMenuItem() );
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -347,6 +355,14 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 startActivity(intent);
                 finish();
                 return true;
+            case R.id.speech_memos_item:
+                Intent memos_intent = new Intent(SpeechPracticeActivity.this, SpeechVoiceMemosActivity.class);
+                memos_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(memos_intent);
+                return true;
+            case R.id.speech_access_item:
+                String aItem = (String) item.getTitle();
+                break;
             default:
                 break;
         }
@@ -378,9 +394,9 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
         mRecEndTime = System.currentTimeMillis();
         long deltaTime = mRecEndTime - mRecStartTime;
-        MediaPlayer mp = MediaPlayer.create(SpeechPracticeActivity.this, Uri.parse(recWordPath));
-        int duration = mp.getDuration();
-        int durationSecs = duration/1000; // convert milliseconds to seconds
+        //MediaPlayer mp = MediaPlayer.create(SpeechPracticeActivity.this, Uri.parse(recWordPath));
+        //int duration = mp.getDuration();
+        int durationSecs = (int) (deltaTime/1000); // convert milliseconds to seconds
 
         int wpmValue = (wordCountSpeech * 60) / durationSecs;
         String wordCountStr = "Words Per Min (WPM): " + wpmValue;
@@ -470,7 +486,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         }
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
-        mydb.updateSpeechActivity(getCurrDate(), "Speech", durationMs);
+        mydb.updateSpeechActivity(getCurrDate(), "Speech", durationMs, recWordPath);
     }
 
     private boolean checkPermissionFromDevice() {
@@ -544,7 +560,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
     private String getCurrDate() {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(System.currentTimeMillis());
-        String date = DateFormat.format("MM-dd-yyyy", cal).toString();
+        String date = DateFormat.format("MM-dd-yyyy HH:MM", cal).toString();
         return date;
     }
 
