@@ -177,6 +177,33 @@ public class SpeechActivityDBHelper extends SQLiteOpenHelper {
         return out_list;
     }
 
+    public SpeechReportDataModel getLatestSpeechData(String activityStr) {
+        ArrayList<SpeechReportDataModel> array_list = new ArrayList<SpeechReportDataModel>();
+        SpeechReportDataModel latest_data = null;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from myactivity", null );
+        String cDateStr = getCurrDate();
+        while(res.moveToNext()) {
+            String logDate = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_DATE));
+            String reportDateList[] = logDate.split(" ");
+            if (reportDateList[0].equals(cDateStr)) {
+                logDate += " (Today)";
+            }
+            String actStr = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_ACTIVITY));
+            String dStr = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_DURATION));
+            String spathStr = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_PATH));
+            if (actStr.equalsIgnoreCase(activityStr)) {
+                SpeechReportDataModel data = new SpeechReportDataModel(logDate, actStr, dStr, spathStr);
+                array_list.add(data);
+            }
+        }
+        if (array_list.size() > 0) {
+            latest_data = array_list.get(array_list.size()-1);
+        }
+        return latest_data;
+    }
+
     private String getCurrDate() {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(System.currentTimeMillis());

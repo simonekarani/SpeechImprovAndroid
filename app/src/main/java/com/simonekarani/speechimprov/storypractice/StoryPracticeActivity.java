@@ -49,6 +49,7 @@ import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
+import com.simonekarani.speechimprov.report.SpeechReportDataModel;
 import com.simonekarani.speechimprov.speechpractice.SpeechPracticeActivity;
 import com.simonekarani.speechimprov.speechpractice.SpeechVoiceMemosActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
@@ -193,6 +194,9 @@ public class StoryPracticeActivity extends AppCompatActivity
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
         textToSpeech.setSpeechRate(0.3f);
+
+        SpeechReportDataModel latestData = mydb.getLatestSpeechData("Story");
+        recWordPath = latestData.getSpeechPath();
 
         sharedPreferences = getSharedPreferences(SP_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("storypractice_first_time", true)) {

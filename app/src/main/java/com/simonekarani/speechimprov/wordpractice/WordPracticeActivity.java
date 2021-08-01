@@ -47,6 +47,7 @@ import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
+import com.simonekarani.speechimprov.report.SpeechReportDataModel;
 import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
 import com.simonekarani.speechimprov.storypractice.StoryVoiceMemosActivity;
 
@@ -148,7 +149,7 @@ public class WordPracticeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_practice);
 
-        setTitle("Practice Word Pronunciation");
+        setTitle("Word Pronunciation");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mydb = new SpeechActivityDBHelper(this);
 
@@ -192,6 +193,9 @@ public class WordPracticeActivity extends AppCompatActivity
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
         textToSpeech.setSpeechRate(0.3f);
+
+        SpeechReportDataModel latestData = mydb.getLatestSpeechData("Word");
+        recWordPath = latestData.getSpeechPath();
 
         sharedPreferences = getSharedPreferences(WP_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("wordpractice_first_time", true)) {
