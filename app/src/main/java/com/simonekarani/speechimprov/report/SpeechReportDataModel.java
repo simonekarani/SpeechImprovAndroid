@@ -20,6 +20,7 @@ public class SpeechReportDataModel {
                                  String pathStr) {
         this.reportTitle = title;
         this.activity = "Activity: " + activityList;
+        this.pathStr = pathStr;
         Long durationValueSecs = Long.parseLong(durationStr) / 1000;
         if (durationValueSecs < 60) {
             this.durationStr = "Duration: " + durationValueSecs + " s";

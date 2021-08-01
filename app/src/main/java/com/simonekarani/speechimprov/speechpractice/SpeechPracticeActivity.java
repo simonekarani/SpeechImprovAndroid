@@ -400,6 +400,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
 
         int wpmValue = (wordCountSpeech * 60) / durationSecs;
         String wordCountStr = "Words Per Min (WPM): " + wpmValue;
+        mydb.updateSpeechActivity(getCurrDate(), "Speech", deltaTime, recWordPath);
     }
 
     private void startWordPlay() {
@@ -486,7 +487,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
         }
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
-        mydb.updateSpeechActivity(getCurrDate(), "Speech", durationMs, recWordPath);
+        //mydb.updateSpeechActivity(getCurrDate(), "Speech", durationMs, recWordPath);
     }
 
     private boolean checkPermissionFromDevice() {

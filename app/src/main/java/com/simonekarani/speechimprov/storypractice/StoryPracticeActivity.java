@@ -50,6 +50,7 @@ import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
 import com.simonekarani.speechimprov.speechpractice.SpeechPracticeActivity;
+import com.simonekarani.speechimprov.speechpractice.SpeechVoiceMemosActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeData;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeDataModel;
@@ -428,8 +429,10 @@ public class StoryPracticeActivity extends AppCompatActivity
                 finish();
                 return true;
             case R.id.story_memos_item:
-                String vItem = (String) item.getTitle();
-                break;
+                Intent memos_intent = new Intent(StoryPracticeActivity.this, StoryVoiceMemosActivity.class);
+                memos_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(memos_intent);
+                return true;
             case R.id.story_access_item:
                 String aItem = (String) item.getTitle();
                 break;
@@ -451,6 +454,7 @@ public class StoryPracticeActivity extends AppCompatActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            mRecStartTime = System.currentTimeMillis();
         }
     }
 
@@ -461,6 +465,13 @@ public class StoryPracticeActivity extends AppCompatActivity
             e.printStackTrace();
         }
         userSelectedOptIdx = -1;
+
+        mRecEndTime = System.currentTimeMillis();
+        long deltaTime = mRecEndTime - mRecStartTime;
+        //MediaPlayer mp = MediaPlayer.create(SpeechPracticeActivity.this, Uri.parse(recWordPath));
+        //int duration = mp.getDuration();
+        int durationSecs = (int) (deltaTime/1000); // convert milliseconds to seconds
+        mydb.updateSpeechActivity(getCurrDate(), "Story", deltaTime, recWordPath);
     }
 
     private void startWordPlay() {
@@ -552,7 +563,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         userSelectedOptIdx = 100;
         activityEndTimeMs = System.currentTimeMillis();
         long durationMs = activityEndTimeMs - activityStartTimeMs;
-        mydb.updateSpeechActivity(getCurrDate(), "Story", durationMs, recWordPath);
+        //mydb.updateSpeechActivity(getCurrDate(), "Story", durationMs, recWordPath);
     }
 
     private void updatePreferenceSetting(int selectedIdx) {

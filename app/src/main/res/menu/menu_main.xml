@@ -6,5 +6,11 @@
     <item android:id="@+id/enable_item"
         android:title="Enable Play"
         app:showAsAction="never" />
+    <item android:id="@+id/word_memos_item"
+        android:title="Voice Memos"
+        app:showAsAction="never" />
+    <item android:id="@+id/word_access_item"
+        android:title="Accessibility"
+        app:showAsAction="never" />
 
 </menu>

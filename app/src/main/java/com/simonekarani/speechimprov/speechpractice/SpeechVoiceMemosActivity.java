@@ -1,29 +1,39 @@
+//
+//  SpeechVoiceMemosActivity.java
+//  SpeechImprov
+//
+//  Created by Simone Karani on 2/9/21.
+//  Copyright © 2021 SpeechImprov. All rights reserved.
+//
+
 package com.simonekarani.speechimprov.speechpractice;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.simonekarani.speechimprov.MainActivity;
 import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
-import com.simonekarani.speechimprov.report.SpeechImprovReportActivity;
+import com.simonekarani.speechimprov.report.SpeechReportDataModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class SpeechVoiceMemosActivity extends AppCompatActivity {
 
     private SpeechActivityDBHelper mydb ;
+    private MediaPlayer mediaPlayer;
+    private ArrayList<SpeechReportDataModel> speechRecList;
+    private SpeechMemosArrayAdapter adapter = null;
+    private ImageView selectedImgView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +43,11 @@ public class SpeechVoiceMemosActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final ListView listview = (ListView) findViewById(R.id.speech_memos_listview);
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile" };
 
         mydb = new SpeechActivityDBHelper(this);
-        final ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < values.length; ++i) {
-            list.add(values[i]);
-        }
 
-        //final SpeechMemosArrayAdapter adapter = new SpeechMemosArrayAdapter(this,
-        //        values );
-        final SpeechMemosArrayAdapter adapter = new SpeechMemosArrayAdapter(this,
-                mydb.getSpeechDataActivity("Speech") );
+        speechRecList = mydb.getSpeechDataActivity("Speech");
+        adapter = new SpeechMemosArrayAdapter(this, speechRecList );
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -56,21 +55,30 @@ public class SpeechVoiceMemosActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                list.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+                selectedImgView = view.findViewById(R.id.speech_voice_icon);
+                selectedImgView.setImageResource(R.drawable.memos_pause);
+                startItemPlay(position);
             }
-
         });
     }
 
+    private void startItemPlay(int listpos) {
+        SpeechReportDataModel speechItem = speechRecList.get(listpos);
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(speechItem.getSpeechPath());
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                selectedImgView.setImageResource(R.drawable.memos_play);
+            }
+        });
+        mediaPlayer.start();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

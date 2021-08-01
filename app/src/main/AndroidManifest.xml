@@ -44,10 +44,20 @@
             tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_word_practice" />
         <activity
+            android:name=".wordpractice.WordVoiceMemosActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:label="Word Voice Memos" />
+        <activity
             android:name=".storypractice.StoryPracticeActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_story_practice" />
+        <activity
+            android:name=".storypractice.StoryVoiceMemosActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:label="Story Voice Memos" />
         <activity
             android:name=".speechpractice.SpeechPracticeActivity"
             android:screenOrientation="portrait"
