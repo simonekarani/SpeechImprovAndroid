@@ -488,8 +488,11 @@ public class StoryPracticeActivity extends AppCompatActivity
         long deltaTime = mRecEndTime - mRecStartTime;
         //MediaPlayer mp = MediaPlayer.create(SpeechPracticeActivity.this, Uri.parse(recWordPath));
         //int duration = mp.getDuration();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int recCount = sharedPreferences.getInt(StoryAccessibilityActivity.KEY_STORY_RECCOUNT, 10);
+
         int durationSecs = (int) (deltaTime/1000); // convert milliseconds to seconds
-        mydb.updateSpeechActivity(getCurrDate(), "Story", deltaTime, recWordPath);
+        mydb.updateSpeechActivity(getCurrDate(), "Story", deltaTime, recWordPath, recCount);
     }
 
     private void startWordPlay() {
@@ -618,7 +621,7 @@ public class StoryPracticeActivity extends AppCompatActivity
     private String getCurrDate() {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(System.currentTimeMillis());
-        String date = DateFormat.format("MM-dd-yyyy HH:MM", cal).toString();
+        String date = DateFormat.format("MM-dd-yyyy HH:mm", cal).toString();
         return date;
     }
 

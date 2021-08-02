@@ -418,9 +418,12 @@ public class SpeechPracticeActivity extends AppCompatActivity
         //int duration = mp.getDuration();
         int durationSecs = (int) (deltaTime/1000); // convert milliseconds to seconds
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int recCount = sharedPreferences.getInt(SpeechAccessibilityActivity.KEY_SPEECH_RECCOUNT, 10);
+
         int wpmValue = (wordCountSpeech * 60) / durationSecs;
         String wordCountStr = "Words Per Min (WPM): " + wpmValue;
-        mydb.updateSpeechActivity(getCurrDate(), "Speech", deltaTime, recWordPath);
+        mydb.updateSpeechActivity(getCurrDate(), "Speech", deltaTime, recWordPath, recCount);
     }
 
     private void startWordPlay() {
@@ -581,7 +584,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
     private String getCurrDate() {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(System.currentTimeMillis());
-        String date = DateFormat.format("MM-dd-yyyy HH:MM", cal).toString();
+        String date = DateFormat.format("MM-dd-yyyy HH:mm", cal).toString();
         return date;
     }
 

@@ -7,11 +7,15 @@ import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+
+import com.simonekarani.speechimprov.speechpractice.SpeechAccessibilityActivity;
 
 public class SpeechActivityDBHelper extends SQLiteOpenHelper {
 
@@ -70,8 +74,9 @@ public class SpeechActivityDBHelper extends SQLiteOpenHelper {
     }
 
     public boolean updateSpeechActivity (String dateStr, String activityStr, long durationMs,
-                                         String pathStr) {
+                                         String pathStr, int maxCount) {
         SpeechReportDataModel dmodel = getSpeechActivityId(dateStr);
+        updateSpeechDBCount(activityStr, maxCount);
         insertSpeechActivity(dateStr, activityStr, durationMs, pathStr);
         return true;
     }
@@ -96,11 +101,11 @@ public class SpeechActivityDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Integer deleteSpeechActivity (Integer id) {
+    public Integer deleteSpeechActivity (SpeechReportDataModel rptDate) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete("contacts",
-                "id = ? ",
-                new String[] { Integer.toString(id) });
+        return db.delete("myactivity",
+                "date = ? ",
+                new String[] { rptDate.getReportTitle() });
     }
 
     public SpeechReportDataModel getSpeechActivityId(String dateStr) {
@@ -202,6 +207,31 @@ public class SpeechActivityDBHelper extends SQLiteOpenHelper {
             latest_data = array_list.get(array_list.size()-1);
         }
         return latest_data;
+    }
+
+    private void updateSpeechDBCount(String activityStr, int maxCount) {
+        ArrayList<SpeechReportDataModel> array_list = new ArrayList<SpeechReportDataModel>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from myactivity", null );
+        String cDateStr = getCurrDate();
+        while(res.moveToNext()) {
+            String logDate = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_DATE));
+            String reportDateList[] = logDate.split(" ");
+            if (reportDateList[0].equals(cDateStr)) {
+                logDate += " (Today)";
+            }
+            String actStr = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_ACTIVITY));
+            String dStr = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_DURATION));
+            String spathStr = res.getString(res.getColumnIndex(SPEECH_LOG_COLUMN_PATH));
+            if (actStr.equalsIgnoreCase(activityStr)) {
+                SpeechReportDataModel data = new SpeechReportDataModel(logDate, actStr, dStr, spathStr);
+                array_list.add(data);
+            }
+        }
+        if (array_list.size() >= maxCount) {
+            deleteSpeechActivity(array_list.get(0));
+        }
     }
 
     private String getCurrDate() {

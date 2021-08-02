@@ -48,6 +48,7 @@ import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
 import com.simonekarani.speechimprov.report.SpeechReportDataModel;
+import com.simonekarani.speechimprov.speechpractice.SpeechAccessibilityActivity;
 import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
 import com.simonekarani.speechimprov.storypractice.StoryVoiceMemosActivity;
 
@@ -462,8 +463,11 @@ public class WordPracticeActivity extends AppCompatActivity
         long durationMs = mRecEndTime - mRecStartTime;
         //MediaPlayer mp = MediaPlayer.create(SpeechPracticeActivity.this, Uri.parse(recWordPath));
         //int duration = mp.getDuration();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int recCount = sharedPreferences.getInt(WordAccessibilityActivity.KEY_WORD_RECCOUNT, 10);
+
         int durationSecs = (int) (durationMs/1000); // convert milliseconds to seconds
-        mydb.updateSpeechActivity(getCurrDate(), "Word", durationMs, recWordPath);
+        mydb.updateSpeechActivity(getCurrDate(), "Word", durationMs, recWordPath, recCount);
     }
 
     private void startWordPlay() {
@@ -641,7 +645,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private String getCurrDate() {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(System.currentTimeMillis());
-        String date = DateFormat.format("MM-dd-yyyy HH:MM", cal).toString();
+        String date = DateFormat.format("MM-dd-yyyy HH:mm", cal).toString();
         return date;
     }
 
