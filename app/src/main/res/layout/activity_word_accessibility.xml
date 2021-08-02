@@ -12,7 +12,7 @@
         android:layout_height="2dip"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="#000000" />
 
@@ -36,7 +36,7 @@
 
         <TextView
             android:id="@+id/word_locale_title"
-            android:layout_width="300dp"
+            android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginStart="10dp"
@@ -204,11 +204,11 @@
 
         <TextView
             android:id="@+id/word_rec_title"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
             android:layout_gravity="left"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
@@ -216,18 +216,20 @@
             android:textSize="20dp" />
 
         <EditText
-            android:id="@+id/word_voice_memos"
-            android:layout_width="256dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
+            android:id="@+id/editWordTextNumber"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="#d3d3d3"
+            android:layout_gravity="left"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="15dp"
+            android:ems="10"
+            android:clickable="true"
+            android:focusable="true"
             android:text="10"
-            android:textSize="20dp" />
+            android:textSize="20dp"
+            android:inputType="number" />
 
     </LinearLayout>
 

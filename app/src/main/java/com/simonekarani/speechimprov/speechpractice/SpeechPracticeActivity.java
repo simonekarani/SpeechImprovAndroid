@@ -22,6 +22,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -171,17 +172,28 @@ public class SpeechPracticeActivity extends AppCompatActivity
         if (!speechText.equals("")) {
             speechTextView.setText(speechText);
         }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String menuItem = sharedPreferences.getString(SpeechAccessibilityActivity.KEY_SPEECH_LOCALE, "English (U.S.)");
+        float speechRate = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_RATE, 0.5f);
+        float speechPitch = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_PITCH, 1.0f);
+
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-        textToSpeech.setSpeechRate(0.3f);
+        textToSpeech.setSpeechRate(speechRate);
+        textToSpeech.setPitch(speechPitch);
+        for (int i = 0; i < SpeechAccessibilityActivity.SpeechLocaleNames.length; i++) {
+            if (SpeechAccessibilityActivity.SpeechLocaleNames[i].equals(menuItem)) {
+                textToSpeech.setLanguage(SpeechAccessibilityActivity.SpeechLocale[i]);
+            }
+        }
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Speech");
         if (latestData != null) {
             recWordPath = latestData.getSpeechPath();
         }
 
-        SharedPreferences sharedPreferences = getSharedPreferences(SPEECH_PREFS_NAME, 0);
-        if (sharedPreferences.getBoolean("speechpractice_first_time", true)) {
-            final SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences sharedSpeechPrefs = getSharedPreferences(SPEECH_PREFS_NAME, 0);
+        if (sharedSpeechPrefs.getBoolean("speechpractice_first_time", true)) {
+            final SharedPreferences.Editor editor = sharedSpeechPrefs.edit();
 
             new AlertDialog.Builder(this)
                     .setTitle("Story Practice Instructions")
@@ -195,7 +207,7 @@ public class SpeechPracticeActivity extends AppCompatActivity
                     .setCancelable(false)
                     .show();
 
-            sharedPreferences.edit().putBoolean("speechpractice_first_time", false).commit();
+            sharedSpeechPrefs.edit().putBoolean("speechpractice_first_time", false).commit();
         }
     }
 

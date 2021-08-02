@@ -50,6 +50,7 @@ import com.simonekarani.speechimprov.R;
 import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
 import com.simonekarani.speechimprov.report.SpeechReportDataModel;
+import com.simonekarani.speechimprov.speechpractice.SpeechAccessibilityActivity;
 import com.simonekarani.speechimprov.speechpractice.SpeechPracticeActivity;
 import com.simonekarani.speechimprov.speechpractice.SpeechVoiceMemosActivity;
 import com.simonekarani.speechimprov.wordpractice.WordPracticeActivity;
@@ -162,6 +163,9 @@ public class StoryPracticeActivity extends AppCompatActivity
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String menuItem = sharedPreferences.getString(KEY_STORY_SCROLLVIEW, "A Very Funny Fairy");
+        String menuItem1 = sharedPreferences.getString(SpeechAccessibilityActivity.KEY_SPEECH_LOCALE, "English (U.S.)");
+        float speechRate = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_RATE, 0.5f);
+        float speechPitch = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_PITCH, 1.0f);
 
         Spinner mySpinner = (Spinner)findViewById(R.id.story_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -193,7 +197,13 @@ public class StoryPracticeActivity extends AppCompatActivity
         wordCountStory = wordCountStoryBook(storyPracticeDataList);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-        textToSpeech.setSpeechRate(0.3f);
+        textToSpeech.setSpeechRate(speechRate);
+        textToSpeech.setPitch(speechPitch);
+        for (int i = 0; i < StoryAccessibilityActivity.StoryLocaleNames.length; i++) {
+            if (StoryAccessibilityActivity.StoryLocaleNames[i].equals(menuItem)) {
+                textToSpeech.setLanguage(StoryAccessibilityActivity.StoryLocale[i]);
+            }
+        }
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Story");
         if (latestData != null) {

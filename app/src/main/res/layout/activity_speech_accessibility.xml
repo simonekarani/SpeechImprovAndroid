@@ -7,17 +7,17 @@
     android:orientation="vertical">
 
     <View
-        android:id="@+id/story_separator"
+        android:id="@+id/speech_separator"
         android:layout_width="match_parent"
         android:layout_height="2dip"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="#000000" />
 
     <TextView
-        android:id="@+id/story_tts_title"
+        android:id="@+id/speech_tts_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -35,8 +35,8 @@
         android:gravity="center_vertical" >
 
         <TextView
-            android:id="@+id/story_locale_title"
-            android:layout_width="300dp"
+            android:id="@+id/speech_locale_title"
+            android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginStart="10dp"
@@ -48,7 +48,7 @@
             android:textSize="20dp" />
 
         <Spinner
-            android:id="@+id/story_locale_spinner"
+            android:id="@+id/speech_locale_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -62,7 +62,7 @@
 
 
     <TextView
-        android:id="@+id/story_speed_text"
+        android:id="@+id/speech_speed_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -82,7 +82,7 @@
         android:layout_marginBottom="10dp" >
 
         <TextView
-            android:id="@+id/story_speed_title"
+            android:id="@+id/speech_speed_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -92,7 +92,7 @@
             android:textSize="20dp" />
 
         <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/story_speed_slider"
+            android:id="@+id/speech_speed_slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
@@ -101,7 +101,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/story_speed_note"
+        android:id="@+id/speech_speed_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -113,7 +113,7 @@
         android:layout_gravity="left" />
 
     <TextView
-        android:id="@+id/story_pitch_text"
+        android:id="@+id/speech_pitch_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -133,7 +133,7 @@
         android:gravity="center_vertical" >
 
         <TextView
-            android:id="@+id/story_pitch_title"
+            android:id="@+id/speech_pitch_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -142,7 +142,7 @@
             android:textSize="20dp" />
 
         <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/story_pitch_slider"
+            android:id="@+id/speech_pitch_slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
@@ -151,7 +151,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/story_pitch_note"
+        android:id="@+id/speech_pitch_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -163,7 +163,7 @@
         android:layout_gravity="left" />
 
     <View
-        android:id="@+id/story_separator2"
+        android:id="@+id/speech_separator2"
         android:layout_width="match_parent"
         android:layout_height="2dip"
         android:layout_alignParentTop="true"
@@ -173,7 +173,7 @@
         android:background="#000000" />
 
     <TextView
-        android:id="@+id/story_rec_speech_title"
+        android:id="@+id/speech_rec_speech_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -185,7 +185,7 @@
         android:layout_gravity="center" />
 
     <TextView
-        android:id="@+id/story_memos_rec_title"
+        android:id="@+id/speech_memos_rec_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -203,36 +203,38 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/story_rec_title"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/speech_rec_title"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
             android:layout_gravity="left"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
             android:layout_marginEnd="5dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:text="Voice Memos: "
             android:textSize="20dp" />
 
         <EditText
-            android:id="@+id/story_voice_memos"
-            android:layout_width="256dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
+            android:id="@+id/editTextNumber"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="#d3d3d3"
+            android:layout_gravity="left"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="15dp"
+            android:ems="10"
+            android:clickable="true"
+            android:focusable="true"
             android:text="10"
-            android:textSize="20dp" />
+            android:textSize="20dp"
+            android:inputType="number" />
 
     </LinearLayout>
 
     <View
-        android:id="@+id/story_separator3"
+        android:id="@+id/speech_separator3"
         android:layout_width="match_parent"
         android:layout_height="2dip"
         android:layout_alignParentTop="true"
