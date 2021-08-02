@@ -195,7 +195,9 @@ public class WordPracticeActivity extends AppCompatActivity
         textToSpeech.setSpeechRate(0.3f);
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Word");
-        recWordPath = latestData.getSpeechPath();
+        if (latestData != null) {
+            recWordPath = latestData.getSpeechPath();
+        }
 
         sharedPreferences = getSharedPreferences(WP_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("wordpractice_first_time", true)) {
@@ -410,7 +412,9 @@ public class WordPracticeActivity extends AppCompatActivity
                 startActivity(memos_intent);
                 return true;
             case R.id.word_access_item:
-                String aItem = (String) item.getTitle();
+                Intent access_intent = new Intent(WordPracticeActivity.this, WordAccessibilityActivity.class);
+                access_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(access_intent);
                 break;
             default:
                 break;

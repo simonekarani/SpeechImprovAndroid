@@ -49,6 +49,11 @@
             tools:ignore="LockedOrientationActivity"
             android:label="Word Voice Memos" />
         <activity
+            android:name=".wordpractice.WordAccessibilityActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:label="Word Accessibility" />
+        <activity
             android:name=".storypractice.StoryPracticeActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
@@ -58,6 +63,11 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
             android:label="Story Voice Memos" />
+        <activity
+            android:name=".storypractice.StoryAccessibilityActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:label="Story Accessibility" />
         <activity
             android:name=".speechpractice.SpeechPracticeActivity"
             android:screenOrientation="portrait"
@@ -73,6 +83,11 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
             android:label="@string/title_activity_speech_practice" />
+        <activity
+            android:name=".speechpractice.SpeechAccessibilityActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:label="Speech Accessibility" />
         <activity android:name=".MainActivity">
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"

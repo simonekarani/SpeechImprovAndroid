@@ -175,7 +175,9 @@ public class SpeechPracticeActivity extends AppCompatActivity
         textToSpeech.setSpeechRate(0.3f);
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Speech");
-        recWordPath = latestData.getSpeechPath();
+        if (latestData != null) {
+            recWordPath = latestData.getSpeechPath();
+        }
 
         SharedPreferences sharedPreferences = getSharedPreferences(SPEECH_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("speechpractice_first_time", true)) {
@@ -365,7 +367,9 @@ public class SpeechPracticeActivity extends AppCompatActivity
                 startActivity(memos_intent);
                 return true;
             case R.id.speech_access_item:
-                String aItem = (String) item.getTitle();
+                Intent access_intent = new Intent(SpeechPracticeActivity.this, SpeechAccessibilityActivity.class);
+                access_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(access_intent);
                 break;
             default:
                 break;
