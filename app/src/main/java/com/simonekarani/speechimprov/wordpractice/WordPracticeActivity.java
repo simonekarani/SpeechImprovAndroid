@@ -10,6 +10,7 @@ package com.simonekarani.speechimprov.wordpractice;
 
 import android.app.AlertDialog;
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -49,6 +51,7 @@ import com.simonekarani.speechimprov.model.MainScreenDataModel;
 import com.simonekarani.speechimprov.report.SpeechActivityDBHelper;
 import com.simonekarani.speechimprov.report.SpeechReportDataModel;
 import com.simonekarani.speechimprov.speechpractice.SpeechAccessibilityActivity;
+import com.simonekarani.speechimprov.storypractice.StoryAccessibilityActivity;
 import com.simonekarani.speechimprov.storypractice.StoryPracticeActivity;
 import com.simonekarani.speechimprov.storypractice.StoryVoiceMemosActivity;
 
@@ -103,6 +106,39 @@ public class WordPracticeActivity extends AppCompatActivity
             "Words for 'V'", "Words for 'TH'", "Words for 'SH'", "Words for 'M'", "Words for 'N'",
             "Words for 'F'", "Words for 'CH'", "Words for 'T S'", "Words for 'NG K G'"
     };
+    private final String[] copyrightSoundCues = {
+
+    };
+    private final int[] imageSoundCues = {
+        R.drawable.alph_v, R.drawable.alph_th, R.drawable.alph_sh, R.drawable.alph_m, R.drawable.alph_n,
+        R.drawable.alph_f, R.drawable.alph_ch, R.drawable.alph_t, R.drawable.alph_ng
+    };
+    private final String[] TherapyGamesDetails = {
+            "Bite lower lip with upper teeth and blow. Feel throat vibrate for this sound",
+            "The tip of the tongue has to be touching the back of the upper front teeth while pushing air out between the tongue and the bony ridge behind the upper front teeth",
+            "Make your lips round and blow",
+            "Close your mouth and hummmmm.. You need two lips. Close your lips",
+            "Teeth together and buzz. Use your nose",
+            "Bite lower lip with upper teeth and blow",
+            "Touch the tip of the tongue to the roof of the mouth to block the passage of air very briefly before releasing it through the mouth",
+            "Use your tongue by flicking up against the top of mouth",
+            "Lift the back of the tongue against the soft palate, which is the soft area at the very back of the roof of your mouth, forming a seal. Then make a sound with your vocal cords"
+    };
+    private final int[] imageSoundNgKG = {
+            R.drawable.alph_ng, R.drawable.alph_k, R.drawable.alph_g
+    };
+    private final String[] detailsSoundNgKG = {
+            "Lift the back of the tongue against the soft palate, which is the soft area at the very back of the roof of your mouth, forming a seal. Then make a sound with your vocal cords",
+            "Quiet Throaty Sound (Back sound)",
+            "Loud Throaty Sound (Back sound)"
+    };
+    private final int[] imageSoundTS = {
+            R.drawable.alph_t, R.drawable.alph_s
+    };
+    private final String[] detailsSoundTS = {
+            "Use your tongue by flicking up against the top of mouth",
+            "Smile and blow. Keep those teeth together. Tongue goes right behind your teeth"
+    };
 
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -111,6 +147,7 @@ public class WordPracticeActivity extends AppCompatActivity
     private View.OnClickListener myOnClickListener;
 
     private TextView readWordView = null;
+    private Button soundcueButton = null;
     private Button prevImageView = null;
     private Button nextImageView = null;
     private ImageView wordImageView = null;
@@ -121,12 +158,14 @@ public class WordPracticeActivity extends AppCompatActivity
     private TextView recText = null;
     private TextView playText = null;
     private TextView repeatText = null;
+    private Dialog soundcueDialog = null;
 
     private TextToSpeech textToSpeech;
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
     private long mRecStartTime = 0;
     private long mRecEndTime = 0;
+    private boolean firstTimeStartup = true;
 
     private WordPracticeDataModel wordPracticeDataList[];
     private Set<Integer> wordPracticeDataSet = new HashSet<>();
@@ -157,22 +196,30 @@ public class WordPracticeActivity extends AppCompatActivity
         currWordSetDataIdx = 0;
         currWordPracticeDataIdx = 0;
         userResultCount = 0;
+        firstTimeStartup = true;
 
         for (int i = 0; i < WordPracticeData.WordPracticeList.length; i++) {
             Index2GameData.put(i, WordPracticeData.WordPracticeList[i]);
         }
-        wordPracticeDataList = Index2GameData.get(0);
+        wordPracticeDataList = Index2GameData.get(currWordSetDataIdx);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String menuItem = sharedPreferences.getString(KEY_WORD_SCROLLVIEW, "Words for 'V'");
+        String menuItem1 = sharedPreferences.getString(WordAccessibilityActivity.KEY_WORD_LOCALE, "English (U.S.)");
+        float speechRate = sharedPreferences.getFloat(WordAccessibilityActivity.KEY_WORD_RATE, 0.5f);
+        float speechPitch = sharedPreferences.getFloat(WordAccessibilityActivity.KEY_WORD_PITCH, 1.0f);
+
+        soundcueDialog = new Dialog(this);
 
         Spinner mySpinner = (Spinner)findViewById(R.id.word_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 R.layout.row, R.id.row_text, TherapyGames);
         mySpinner.setAdapter(adapter);
         mySpinner.setOnItemSelectedListener(this);
-        mySpinner.setSelection( adapter.getPosition(menuItem) );
+        currWordSetDataIdx = adapter.getPosition(menuItem);
+        mySpinner.setSelection(currWordSetDataIdx);
 
+        soundcueButton = (Button) findViewById(R.id.lipImageButton);
         readWordView = (TextView) findViewById(R.id.readWordText);
         prevImageView = (Button) findViewById(R.id.prevImage);
         nextImageView = (Button) findViewById(R.id.nextImage);
@@ -191,14 +238,24 @@ public class WordPracticeActivity extends AppCompatActivity
         recordedBtnView.setOnClickListener(myOnClickListener);
         recordBtnView.setOnClickListener(myOnClickListener);
         playBtnView.setOnClickListener(myOnClickListener);
+        soundcueButton.setOnClickListener(myOnClickListener);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-        textToSpeech.setSpeechRate(0.3f);
+        textToSpeech.setSpeechRate(speechRate);
+        textToSpeech.setPitch(speechPitch);
+        for (int i = 0; i < WordAccessibilityActivity.WordLocaleNames.length; i++) {
+            if (WordAccessibilityActivity.WordLocaleNames[i].equals(menuItem1)) {
+                textToSpeech.setLanguage(WordAccessibilityActivity.WordLocale[i]);
+            }
+        }
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Word");
         if (latestData != null) {
             recWordPath = latestData.getSpeechPath();
         }
+
+        SharedPreferences sharedPreferences1 = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        currWordPracticeDataIdx = sharedPreferences1.getInt(KEY_WORD_LISTVIEW, 0);
 
         sharedPreferences = getSharedPreferences(WP_PREFS_NAME, 0);
         if (sharedPreferences.getBoolean("wordpractice_first_time", true)) {
@@ -243,8 +300,6 @@ public class WordPracticeActivity extends AppCompatActivity
         recordBtnView.setImageResource(R.drawable.rec);
         playBtnView.setImageResource(R.drawable.play);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        currWordPracticeDataIdx = sharedPreferences.getInt(KEY_WORD_LISTVIEW, 0);
         currPracticeData = wordPracticeDataList[currWordPracticeDataIdx];
         wordImageView.setImageResource(currPracticeData.id_);
         readWordView.setText(currPracticeData.word);
@@ -351,7 +406,7 @@ public class WordPracticeActivity extends AppCompatActivity
                     }
                 }
             }
-            else if (v.getId() == R.id.playBtn){
+            else if (v.getId() == R.id.playBtn) {
                 if (!isEnableVoicePlayback()) {
                     createAlertDialog("Word Practice", "Voice Playback disabled ... \n"+
                             "Select the Menu \"Enable 'Play' Voice\"");
@@ -372,6 +427,9 @@ public class WordPracticeActivity extends AppCompatActivity
                         startWordPlay();
                     }
                 }
+            }
+            else if (v.getId() == R.id.lipImageButton) {
+                showSoundCueDialog(currWordSetDataIdx);
             }
         }
     }
@@ -421,6 +479,117 @@ public class WordPracticeActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showSoundCueDialog(int pos) {
+        TextView txtclose;
+        Button btnFollow;
+        TextView titleSoundcue;
+        ImageView imgSoundcue;
+        TextView detailsSoundcue;
+
+        if (pos == TherapyGamesDetails.length-1) {
+            soundcueDialog.setContentView(R.layout.cards_three_soundcue);
+            btnFollow = (Button) soundcueDialog.findViewById(R.id.ok_soundcue3);
+            imgSoundcue = (ImageView) soundcueDialog.findViewById(R.id.img1_soundcue3);
+            titleSoundcue = (TextView) soundcueDialog.findViewById(R.id.title_soundcue3);
+            detailsSoundcue = (TextView) soundcueDialog.findViewById(R.id.details1_soundcue3);
+            Button cue1Btn = (Button) soundcueDialog.findViewById(R.id.cue1_soundcue3);
+            Button cue2Btn = (Button) soundcueDialog.findViewById(R.id.cue2_soundcue3);
+            Button cue3Btn = (Button) soundcueDialog.findViewById(R.id.cue3_soundcue3);
+            TextView copyrightCue3 = (TextView) soundcueDialog.findViewById(R.id.copyright1_soundcue3);
+
+            cue1Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    copyrightCue3.setText("");
+                    detailsSoundcue.setText(detailsSoundNgKG[0]);
+                    imgSoundcue.setImageResource(imageSoundNgKG[0]);
+                    cue1Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.blueselected));
+                    cue2Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                    cue3Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                }
+            });
+            cue2Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    copyrightCue3.setText("Copyright Speechy Musings");
+                    detailsSoundcue.setText(detailsSoundNgKG[1]);
+                    imgSoundcue.setImageResource(imageSoundNgKG[1]);
+                    cue1Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                    cue2Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.blueselected));
+                    cue3Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                }
+            });
+            cue3Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    copyrightCue3.setText("Copyright Speechy Musings");
+                    detailsSoundcue.setText(detailsSoundNgKG[2]);
+                    imgSoundcue.setImageResource(imageSoundNgKG[2]);
+                    cue1Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                    cue2Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                    cue3Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.blueselected));
+                }
+            });
+        } else if (pos == TherapyGamesDetails.length-2) {
+            soundcueDialog.setContentView(R.layout.cards_two_soundcue);
+            btnFollow = (Button) soundcueDialog.findViewById(R.id.ok_soundcue2);
+            imgSoundcue = (ImageView) soundcueDialog.findViewById(R.id.img1_soundcue2);
+            titleSoundcue = (TextView) soundcueDialog.findViewById(R.id.title_soundcue2);
+            detailsSoundcue = (TextView) soundcueDialog.findViewById(R.id.details1_soundcue2);
+            Button cue1Btn = (Button) soundcueDialog.findViewById(R.id.cue1_soundcue2);
+            Button cue2Btn = (Button) soundcueDialog.findViewById(R.id.cue2_soundcue2);
+
+            cue1Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    detailsSoundcue.setText(detailsSoundTS[0]);
+                    imgSoundcue.setImageResource(imageSoundTS[0]);
+                    cue1Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.blueselected));
+                    cue2Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                }
+            });
+            cue2Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    detailsSoundcue.setText(detailsSoundTS[1]);
+                    imgSoundcue.setImageResource(imageSoundTS[1]);
+                    cue1Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.purple_500));
+                    cue2Btn.setBackgroundColor(
+                            ContextCompat.getColor(getApplicationContext(), R.color.blueselected));
+                }
+            });
+        } else {
+            soundcueDialog.setContentView(R.layout.cards_soundcue);
+            btnFollow = (Button) soundcueDialog.findViewById(R.id.ok_soundcue);
+            imgSoundcue = (ImageView) soundcueDialog.findViewById(R.id.img_soundcue);
+            titleSoundcue = (TextView) soundcueDialog.findViewById(R.id.title_soundcue);
+            detailsSoundcue = (TextView) soundcueDialog.findViewById(R.id.details_soundcue);
+        }
+        titleSoundcue.setText(TherapyGames[pos]);
+        detailsSoundcue.setText(TherapyGamesDetails[pos]);
+        imgSoundcue.setImageResource(imageSoundCues[pos]);
+        btnFollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                soundcueDialog.dismiss();
+            }
+        });
+        soundcueDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        soundcueDialog.show();
     }
 
     public void startSpeechRecognition() {
@@ -516,9 +685,16 @@ public class WordPracticeActivity extends AppCompatActivity
                                int pos, long id) {
         wordPracticeDataList =  Index2GameData.get(pos);
         currWordPracticeDataIdx = 0;
+        currWordSetDataIdx = pos;
 
         updatePreferenceSetting(pos);
+        updatePreferenceWordListSetting(currWordPracticeDataIdx);
         updateWordImprovView();
+        if (!firstTimeStartup) {
+            showSoundCueDialog(pos);
+        } else {
+            firstTimeStartup = false;
+        }
     }
 
     public void onNothingSelected(AdapterView<?> parent) {

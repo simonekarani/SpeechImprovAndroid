@@ -200,7 +200,7 @@ public class StoryPracticeActivity extends AppCompatActivity
         textToSpeech.setSpeechRate(speechRate);
         textToSpeech.setPitch(speechPitch);
         for (int i = 0; i < StoryAccessibilityActivity.StoryLocaleNames.length; i++) {
-            if (StoryAccessibilityActivity.StoryLocaleNames[i].equals(menuItem)) {
+            if (StoryAccessibilityActivity.StoryLocaleNames[i].equals(menuItem1)) {
                 textToSpeech.setLanguage(StoryAccessibilityActivity.StoryLocale[i]);
             }
         }
