@@ -141,6 +141,10 @@ public class StoryPracticeActivity extends AppCompatActivity
     private SpeechActivityDBHelper mydb ;
     private long activityStartTimeMs = 0;
     private long activityEndTimeMs = 0;
+    private String speechLocaleItem = null;
+    private float speechRate = 0.5f;
+    private float speechPitch = 1.0f;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,9 +167,9 @@ public class StoryPracticeActivity extends AppCompatActivity
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String menuItem = sharedPreferences.getString(KEY_STORY_SCROLLVIEW, "A Very Funny Fairy");
-        String menuItem1 = sharedPreferences.getString(SpeechAccessibilityActivity.KEY_SPEECH_LOCALE, "English (U.S.)");
-        float speechRate = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_RATE, 0.5f);
-        float speechPitch = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_PITCH, 1.0f);
+        speechLocaleItem = sharedPreferences.getString(StoryAccessibilityActivity.KEY_STORY_LOCALE, "English (U.S.)");
+        speechRate = sharedPreferences.getFloat(StoryAccessibilityActivity.KEY_STORY_RATE, 0.5f);
+        speechPitch = sharedPreferences.getFloat(StoryAccessibilityActivity.KEY_STORY_PITCH, 1.0f);
 
         Spinner mySpinner = (Spinner)findViewById(R.id.story_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -197,13 +201,6 @@ public class StoryPracticeActivity extends AppCompatActivity
         wordCountStory = wordCountStoryBook(storyPracticeDataList);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-        textToSpeech.setSpeechRate(speechRate);
-        textToSpeech.setPitch(speechPitch);
-        for (int i = 0; i < StoryAccessibilityActivity.StoryLocaleNames.length; i++) {
-            if (StoryAccessibilityActivity.StoryLocaleNames[i].equals(menuItem1)) {
-                textToSpeech.setLanguage(StoryAccessibilityActivity.StoryLocale[i]);
-            }
-        }
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Story");
         if (latestData != null) {
@@ -265,8 +262,15 @@ public class StoryPracticeActivity extends AppCompatActivity
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             int lang = textToSpeech.setLanguage(Locale.ENGLISH);
-            if (status==TextToSpeech.LANG_MISSING_DATA||status==TextToSpeech.LANG_NOT_SUPPORTED){
-                Log.i("TextToSpeech","Language Not Supported");
+            textToSpeech.setSpeechRate(speechRate);
+            textToSpeech.setPitch(speechPitch);
+            for (int i = 0; i < SpeechAccessibilityActivity.SpeechLocaleNames.length; i++) {
+                if (SpeechAccessibilityActivity.SpeechLocaleNames[i].equals(speechLocaleItem)) {
+                    lang = textToSpeech.setLanguage(SpeechAccessibilityActivity.SpeechLocale[i]);
+                    if (status==TextToSpeech.LANG_MISSING_DATA||status==TextToSpeech.LANG_NOT_SUPPORTED){
+                        Log.i("TextToSpeech","Language Not Supported");
+                    }
+                }
             }
 
             textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {

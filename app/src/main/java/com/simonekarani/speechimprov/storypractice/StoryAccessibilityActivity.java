@@ -41,11 +41,11 @@ public class StoryAccessibilityActivity extends AppCompatActivity
     public final static String KEY_STORY_RECCOUNT = "StoryRecCount";
 
     public static final String[] StoryLocaleNames = {
-            "English (U.S.)", "English (Great Britain)",
+            "English (US)", "English (UK)",
             "English (Australia)", "English (India)"
     };
     public static final Locale[] StoryLocale = {
-            Locale.US, Locale.UK, Locale.ENGLISH, Locale.ENGLISH
+            Locale.US, Locale.UK, new Locale("en", "AU"), new Locale("en", "IN")
     };
 
     private SeekBar storyRateSeekBar;

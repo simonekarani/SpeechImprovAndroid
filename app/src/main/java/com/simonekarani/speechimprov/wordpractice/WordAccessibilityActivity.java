@@ -43,11 +43,11 @@ public class WordAccessibilityActivity extends AppCompatActivity
     public final static String KEY_WORD_RECCOUNT = "WordRecCount";
 
     public static final String[] WordLocaleNames = {
-            "English (U.S.)", "English (Great Britain)",
+            "English (US)", "English (UK)",
             "English (Australia)", "English (India)"
     };
     public static final Locale[] WordLocale = {
-            Locale.US, Locale.UK, Locale.ENGLISH, Locale.ENGLISH
+            Locale.US, Locale.UK, new Locale("en", "AU"), new Locale("en", "IN")
     };
 
     private SeekBar wordRateSeekBar;

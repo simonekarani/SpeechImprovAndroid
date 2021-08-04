@@ -182,6 +182,9 @@ public class WordPracticeActivity extends AppCompatActivity
     private SpeechRecognizer speechRecognizer;
     private Intent speechRecognizerIntent;
     private String keeper = "";
+    private String speechLocaleItem = null;
+    private float speechRate = 0.5f;
+    private float speechPitch = 1.0f;
 
 
     @Override
@@ -205,9 +208,9 @@ public class WordPracticeActivity extends AppCompatActivity
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String menuItem = sharedPreferences.getString(KEY_WORD_SCROLLVIEW, "Words for 'V'");
-        String menuItem1 = sharedPreferences.getString(WordAccessibilityActivity.KEY_WORD_LOCALE, "English (U.S.)");
-        float speechRate = sharedPreferences.getFloat(WordAccessibilityActivity.KEY_WORD_RATE, 0.5f);
-        float speechPitch = sharedPreferences.getFloat(WordAccessibilityActivity.KEY_WORD_PITCH, 1.0f);
+        speechLocaleItem = sharedPreferences.getString(WordAccessibilityActivity.KEY_WORD_LOCALE, "English (U.S.)");
+        speechRate = sharedPreferences.getFloat(WordAccessibilityActivity.KEY_WORD_RATE, 0.5f);
+        speechPitch = sharedPreferences.getFloat(WordAccessibilityActivity.KEY_WORD_PITCH, 1.0f);
 
         soundcueDialog = new Dialog(this);
 
@@ -241,13 +244,6 @@ public class WordPracticeActivity extends AppCompatActivity
         soundcueButton.setOnClickListener(myOnClickListener);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-        textToSpeech.setSpeechRate(speechRate);
-        textToSpeech.setPitch(speechPitch);
-        for (int i = 0; i < WordAccessibilityActivity.WordLocaleNames.length; i++) {
-            if (WordAccessibilityActivity.WordLocaleNames[i].equals(menuItem1)) {
-                textToSpeech.setLanguage(WordAccessibilityActivity.WordLocale[i]);
-            }
-        }
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Word");
         if (latestData != null) {
@@ -314,8 +310,15 @@ public class WordPracticeActivity extends AppCompatActivity
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             int lang = textToSpeech.setLanguage(Locale.ENGLISH);
-            if (status==TextToSpeech.LANG_MISSING_DATA||status==TextToSpeech.LANG_NOT_SUPPORTED){
-                Log.i("TextToSpeech","Language Not Supported");
+            textToSpeech.setSpeechRate(speechRate);
+            textToSpeech.setPitch(speechPitch);
+            for (int i = 0; i < WordAccessibilityActivity.WordLocaleNames.length; i++) {
+                if (WordAccessibilityActivity.WordLocaleNames[i].equals(speechLocaleItem)) {
+                    lang = textToSpeech.setLanguage(WordAccessibilityActivity.WordLocale[i]);
+                    if (status==TextToSpeech.LANG_MISSING_DATA||status==TextToSpeech.LANG_NOT_SUPPORTED){
+                        Log.i("TextToSpeech","Language Not Supported");
+                    }
+                }
             }
 
             textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {

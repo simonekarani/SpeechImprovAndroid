@@ -43,11 +43,11 @@ public class SpeechAccessibilityActivity extends AppCompatActivity
     public final static String KEY_SPEECH_RECCOUNT = "SpeechRecCount";
 
     public static final String[] SpeechLocaleNames = {
-            "English (U.S.)", "English (Great Britain)",
+            "English (US)", "English (UK)",
             "English (Australia)", "English (India)"
     };
     public static final Locale[] SpeechLocale = {
-            Locale.US, Locale.UK, Locale.ENGLISH, Locale.ENGLISH
+            Locale.US, Locale.UK, new Locale("en", "AU"), new Locale("en", "IN")
     };
 
     private SeekBar speechRateSeekBar;

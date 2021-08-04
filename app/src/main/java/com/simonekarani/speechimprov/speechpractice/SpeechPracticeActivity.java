@@ -115,6 +115,10 @@ public class SpeechPracticeActivity extends AppCompatActivity
     private SpeechActivityDBHelper mydb ;
     private long activityStartTimeMs = 0;
     private long activityEndTimeMs = 0;
+    private String speechLocaleItem = null;
+    private float speechRate = 0.5f;
+    private float speechPitch = 1.0f;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,18 +177,11 @@ public class SpeechPracticeActivity extends AppCompatActivity
             speechTextView.setText(speechText);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String menuItem = sharedPreferences.getString(SpeechAccessibilityActivity.KEY_SPEECH_LOCALE, "English (U.S.)");
-        float speechRate = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_RATE, 0.5f);
-        float speechPitch = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_PITCH, 1.0f);
+        speechLocaleItem = sharedPreferences.getString(SpeechAccessibilityActivity.KEY_SPEECH_LOCALE, "English (U.S.)");
+        speechRate = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_RATE, 0.5f);
+        speechPitch = sharedPreferences.getFloat(SpeechAccessibilityActivity.KEY_SPEECH_PITCH, 1.0f);
 
         textToSpeech = new TextToSpeech(getApplicationContext(), this);
-        textToSpeech.setSpeechRate(speechRate);
-        textToSpeech.setPitch(speechPitch);
-        for (int i = 0; i < SpeechAccessibilityActivity.SpeechLocaleNames.length; i++) {
-            if (SpeechAccessibilityActivity.SpeechLocaleNames[i].equals(menuItem)) {
-                textToSpeech.setLanguage(SpeechAccessibilityActivity.SpeechLocale[i]);
-            }
-        }
 
         SpeechReportDataModel latestData = mydb.getLatestSpeechData("Speech");
         if (latestData != null) {
@@ -256,8 +253,15 @@ public class SpeechPracticeActivity extends AppCompatActivity
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             int lang = textToSpeech.setLanguage(Locale.ENGLISH);
-            if (status==TextToSpeech.LANG_MISSING_DATA||status==TextToSpeech.LANG_NOT_SUPPORTED){
-                Log.i("TextToSpeech","Language Not Supported");
+            textToSpeech.setSpeechRate(speechRate);
+            textToSpeech.setPitch(speechPitch);
+            for (int i = 0; i < SpeechAccessibilityActivity.SpeechLocaleNames.length; i++) {
+                if (SpeechAccessibilityActivity.SpeechLocaleNames[i].equals(speechLocaleItem)) {
+                    lang = textToSpeech.setLanguage(SpeechAccessibilityActivity.SpeechLocale[i]);
+                    if (status==TextToSpeech.LANG_MISSING_DATA||status==TextToSpeech.LANG_NOT_SUPPORTED){
+                        Log.i("TextToSpeech","Language Not Supported");
+                    }
+                }
             }
 
             textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
